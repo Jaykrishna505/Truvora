@@ -1,6 +1,6 @@
 # Truvora Python Realtime Review Platform
 
-This is a Python/FastAPI version of the hotel review request platform. It is separate from the existing Node version and does not modify it.
+This is a Python/FastAPI version of the hotel review request platform.
 
 ## What It Does
 
@@ -12,10 +12,9 @@ This is a Python/FastAPI version of the hotel review request platform. It is sep
 - Guest request creation
 - Unique public guest feedback links
 - Guest rating and comments
-- Compliant review flow:
+- Review flow:
   - Submit feedback privately
   - Leave a Google review
-  - Both options are always shown
 - Realtime dashboard updates with Server-Sent Events
 - Delivery log for SMS/email
 - Brevo SMTP email support
