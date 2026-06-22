@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Guest Feedback | Truvora Python</title>
+    <link rel="stylesheet" href="/static/styles.css?v=0.1.11" />
+  </head>
+  <body class="guest-body">
+    <main class="guest-layout">
+      <section class="guest-hero">
+        <p class="eyebrow">Guest feedback</p>
+        <h1>How was your stay at {{ guest.hotelName }}?</h1>
+        <p>{{ guest.guestName }}, share private feedback with the hotel team or leave a Google review.</p>
+      </section>
+      <form class="guest-card" id="feedback-form">
+        <div class="guest-form-fields" id="guest-form-fields">
+          <fieldset>
+            <legend>Rate your experience</legend>
+            <div class="stars" id="stars">
+              <button type="button" data-rating="1" aria-label="1 star">&#9734;</button>
+              <button type="button" data-rating="2" aria-label="2 stars">&#9734;</button>
+              <button type="button" data-rating="3" aria-label="3 stars">&#9734;</button>
+              <button type="button" data-rating="4" aria-label="4 stars">&#9734;</button>
+              <button type="button" data-rating="5" aria-label="5 stars">&#9734;</button>
+            </div>
+          </fieldset>
+          <label>Comments<textarea name="comments" rows="6"></textarea></label>
+          <div class="guest-choice hidden" id="guest-choice">
+            <p id="guest-choice-message"></p>
+            <div class="actions">
+              <button class="primary-button" id="private-feedback-button" type="submit">Submit feedback privately</button>
+              <a class="secondary-button" id="google-review-button" href="{{ guest.googleLink }}" target="_blank" rel="noreferrer">Leave a Google review</a>
+            </div>
+          </div>
+        </div>
+        <section class="submission-confirmation hidden" id="submission-confirmation" aria-live="polite">
+          <p class="eyebrow">Feedback submitted</p>
+          <h2>Thank you for sharing your feedback.</h2>
+          <p>Your response has been sent to the hotel team. You can close this page.</p>
+        </section>
+        <output id="guest-message" class="message hidden"></output>
+      </form>
+    </main>
+    <script>
+      window.feedbackToken = "{{ token }}";
+    </script>
+    <script src="/static/guest.js?v=0.1.8"></script>
+  </body>
+</html>

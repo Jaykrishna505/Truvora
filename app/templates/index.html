@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Truvora Python | Sign in</title>
+    <link rel="stylesheet" href="/static/styles.css?v=0.1.11" />
+  </head>
+  <body class="auth-page">
+    <main class="auth-layout">
+      <section class="auth-copy">
+        <div class="brand-row"><div class="brand-mark">T</div><strong>Truvora</strong></div>
+        <h1>One Platform for Reviews, Reputation, and Growth.</h1>
+        <p>Collect customer feedback, manage your online presence, and turn every customer interaction into an opportunity to grow your business.</p>
+        <p><b>Get started in minutes. No technical expertise required.</b></p>
+        <!--<h1>Realtime hotel review requests with Brevo, Twilio, and Stripe hooks.</h1>
+        <p>Collect compliant private feedback, keep Google review access open, and watch request activity update live.</p>-->
+      </section>
+
+      <section class="auth-card">
+        <div class="tabs">
+          <button class="tab active" data-auth-tab="register">Create account</button>
+          <button class="tab" data-auth-tab="login">Log in</button>
+        </div>
+
+        <form class="auth-form" id="register-form">
+          <label>Hotel name<input name="hotelName" required placeholder="Test Hotel" /></label>
+          <label>Email<input name="email" type="email" required placeholder="owner@example.com" /></label>
+          <label>Password<input name="password" type="password" minlength="8" required placeholder="At least 8 characters" /></label>
+          <button class="primary-button" type="submit">Create account</button>
+        </form>
+
+        <form class="auth-form hidden" id="login-form">
+          <label>Email<input name="email" type="email" required /></label>
+          <label>Password<input name="password" type="password" required /></label>
+          <button class="primary-button" type="submit">Log in</button>
+          <button class="text-button" id="forgot-button" type="button">Forgot password?</button>
+        </form>
+
+        <form class="auth-form hidden" id="forgot-form">
+          <div>
+            <p class="eyebrow">Password reset</p>
+            <h2>Find your account</h2>
+          </div>
+          <label>Email<input name="email" type="email" required placeholder="owner@example.com" /></label>
+          <button class="primary-button" type="submit">Send reset link</button>
+          <button class="text-button" id="back-to-login" type="button">Back to login</button>
+        </form>
+
+        <output class="auth-message hidden" id="auth-message"></output>
+      </section>
+    </main>
+    <script src="/static/auth.js"></script>
+  </body>
+</html>

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Truvora Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css?v=0.1.11" />
+  </head>
+  <body class="dashboard-page">
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand-row">
+          <div class="brand-mark">T</div>
+          <div><strong>Truvora</strong><span>Build Trust, Grow Local.</span></div>
+        </div>
+        <nav class="nav">
+          <button class="nav-item active" data-view="dashboard">Dashboard</button>
+          <button class="nav-item" data-view="send">Guest entry</button>
+          <button class="nav-item" data-view="deliveries">Deliveries</button>
+          <button class="nav-item" data-view="settings">Settings</button>
+          <button class="nav-item" data-view="billing">Billing</button>
+        </nav>
+        <!--<div class="compliance-box">
+          <strong>Compliant handling</strong>
+          <p>Guests always receive both private feedback and Google review choices.</p>
+        </div>-->
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Owner dashboard</p>
+            <h1 id="page-title">Realtime requests</h1>
+          </div>
+          <div class="account-chip">
+            <div><strong id="hotel-name">Hotel</strong><span id="account-email">{{ user.email }}</span></div>
+            <form action="/logout" method="post"><button class="secondary-button">Log out</button></form>
+          </div>
+        </header>
+
+        <section class="access-banner" id="access-banner"></section>
+
+        <section class="view active" id="dashboard-view">
+          <div class="metrics">
+            <article class="metric"><span>Total requests sent</span><strong id="sent-count">0</strong></article>
+            <article class="metric"><span>Opened</span><strong id="opened-count">0</strong></article>
+            <article class="metric positive"><span>Positive feedback</span><strong id="positive-count">0</strong></article>
+            <article class="metric negative"><span>Needs attention</span><strong id="negative-count">0</strong></article>
+          </div>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Guest activity</h2><p id="live-status">Live connection starting...</p></div>
+              <div class="segmented">
+                <button class="segment active" data-filter="all">All</button>
+                <button class="segment" data-filter="positive">Positive</button>
+                <button class="segment" data-filter="negative">Needs attention</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Guest</th><th>Status</th><th>Rating</th><th>Comment</th><th>Feedback link</th><th>Follow-up notes</th></tr></thead>
+                <tbody id="requests-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="send-view">
+          <form class="panel request-panel" id="request-form">
+            <div class="panel-heading request-heading">
+              <div><h2>Send review request</h2><p>Creates a unique guest feedback link and sends/records SMS and email.</p></div>
+              <button class="primary-button">Send request</button>
+            </div>
+            <div class="request-fields">
+              <label>Guest name<input name="guestName" required /></label>
+              <label>Email<input name="email" type="email" required /></label>
+              <label>Phone<input name="phone" required /></label>
+              <label>Stay date<input name="stayDate" type="date" required /></label>
+            </div>
+            <output id="request-message" class="message wide hidden"></output>
+          </form>
+        </section>
+
+        <section class="view" id="deliveries-view">
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>SMS and email deliveries</h2><p>Local means keys are missing. Sent means Brevo/Twilio accepted the message.</p></div>
+              <button class="secondary-button" id="refresh-deliveries">Refresh</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Guest</th><th>Channel</th><th>Provider</th><th>Status</th><th>Message</th><th>Created</th></tr></thead>
+                <tbody id="deliveries-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="settings-view">
+          <form class="panel settings-panel" id="settings-form">
+            <div class="panel-heading settings-heading">
+              <div>
+                <h2>Hotel settings</h2>
+                <p>Manage review links and guest message templates.</p>
+              </div>
+              <button class="primary-button">Save settings</button>
+            </div>
+            <div class="settings-fields">
+              <label>Hotel name<input name="name" required /></label>
+              <label>Google Business review link<input name="googleLink" required /></label>
+            </div>
+            <div class="template-helper">
+              <span>Template variables</span>
+              <code>{guest}</code>
+              <code>{hotel}</code>
+              <code>{link}</code>
+            </div>
+            <div class="template-fields">
+              <label>SMS template<textarea name="smsTemplate" rows="4"></textarea></label>
+              <label>Email template<textarea name="emailTemplate" rows="7"></textarea></label>
+            </div>
+            <output id="settings-message" class="message wide hidden"></output>
+          </form>
+        </section>
+
+        <section class="view" id="billing-view">
+          <div class="billing-stack">
+            <article class="plan-card current-plan-card">
+              <p class="eyebrow">Current plan</p>
+              <h2 id="plan-name">Trial</h2>
+              <p id="payment-status">Payment status: trial</p>
+              <p id="package-expiry" class="billing-note"></p>
+              <p id="cancellation-status" class="billing-note"></p>
+              <button class="secondary-button hidden" id="cancel-package-button" type="button">Request cancellation</button>
+            </article>
+            <div class="package-grid" id="package-grid"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/dashboard.js?v=0.1.12"></script>
+  </body>
+</html>

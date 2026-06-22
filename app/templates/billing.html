@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Local Checkout | Truvora Python</title>
+    <link rel="stylesheet" href="/static/styles.css?v=0.1.11" />
+  </head>
+  <body class="auth-page">
+    <main class="auth-layout">
+      <section class="auth-copy">
+        <div class="brand-row"><div class="brand-mark">SS</div><strong>Truvora Billing</strong></div>
+        <h1>Activate Pro with local checkout.</h1>
+        <p>Add Stripe keys later to redirect to real Stripe Checkout.</p>
+      </section>
+      <section class="auth-card">
+        <p class="eyebrow">Pro plan</p>
+        <h2 id="checkout-title">Activate package</h2>
+        <p>Simulated payment records a successful subscription in SQLite. Real Stripe Checkout is used when Stripe keys are configured.</p>
+        <button class="primary-button" id="pay-button">Pay and activate</button>
+        <output id="billing-message" class="message hidden"></output>
+      </section>
+    </main>
+    <script src="/static/billing.js"></script>
+  </body>
+</html>
