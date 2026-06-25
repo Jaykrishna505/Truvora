@@ -10,6 +10,10 @@ document.querySelectorAll("#stars button").forEach((button) => {
   });
 });
 
+document.querySelector("#google-review-button").addEventListener("click", () => {
+  trackGoogleClick();
+});
+
 document.querySelector("#feedback-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!rating) {
@@ -81,4 +85,13 @@ function showSubmittedState() {
   document.querySelector("#guest-form-fields").classList.add("hidden");
   document.querySelector("#guest-message").classList.add("hidden");
   document.querySelector("#submission-confirmation").classList.remove("hidden");
+}
+
+function trackGoogleClick() {
+  const url = `/api/public/google-click/${window.feedbackToken}`;
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(url);
+    return;
+  }
+  fetch(url, { method: "POST", keepalive: true }).catch(() => {});
 }
