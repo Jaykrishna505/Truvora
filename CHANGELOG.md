@@ -2,6 +2,13 @@
 
 All meaningful platform changes will be tracked here.
 
+## v0.1.13 - Google Review Click Tracking
+
+- Tracks when a guest clicks the Google review button.
+- Stores the latest Google click timestamp and click count locally.
+- Shows Google click status in the dashboard request table.
+- Uses beacon-style tracking so Google can still open immediately.
+
 ## v0.1.12 - Cancellation-Pending Package Choice
 
 - Added a package-change choice for cancellation-pending subscriptions.
