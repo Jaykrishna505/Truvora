@@ -53,7 +53,7 @@ function renderChoice() {
   privateButton.classList.add("hidden");
   googleButton.classList.add("hidden");
   privateButton.className = "primary-button hidden";
-  googleButton.className = "primary-button hidden"
+  googleButton.className = "primary-button hidden";
 
   if (rating >= 3) {
     googleButton.classList.remove("hidden");
