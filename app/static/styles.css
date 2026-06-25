@@ -180,6 +180,17 @@ th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
 .status.responded, .rating.good { color: var(--green); background: var(--green-soft); }
 .status.failed, .rating.watch { color: var(--red); background: var(--red-soft); }
 .message-cell { max-width: 420px; white-space: normal; }
+.google-clicked {
+  display: block;
+  margin-top: 8px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 800;
+}
+.google-clicked.muted {
+  color: var(--muted);
+  font-weight: 700;
+}
 .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .request-panel {
   display: grid;
