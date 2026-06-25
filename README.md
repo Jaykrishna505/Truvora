@@ -12,6 +12,7 @@ This is a Python/FastAPI version of the hotel review request platform.
 - Guest request creation
 - Unique public guest feedback links
 - Guest rating and comments
+- Local Google review button click tracking
 - Review flow:
   - Submit feedback privately
   - Leave a Google review
