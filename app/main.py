@@ -360,6 +360,8 @@ async def api_create_request(request: Request):
                 "sent_at": now(),
                 "opened_at": None,
                 "responded_at": None,
+                "google_clicked_at": None,
+                "google_click_count": 0,
             },
         )
         created = conn.execute("select * from requests where id = ?", (request_id,)).fetchone()
@@ -480,6 +482,26 @@ async def api_public_feedback(token: str, request: Request):
     await broadcast(guest_request["hotel_id"], "requests", payload)
     return {"ok": True}
 
+@app.post("/api/public/google-click/{token}")
+async def api_public_google_click(token: str):
+    with db() as conn:
+        guest_request = conn.execute("select * from requests where token = ?", (token,)).fetchone()
+        if not guest_request:
+            raise HTTPException(404, "Feedback link not found.")
+        hotel = get_hotel(conn, guest_request["hotel_id"])
+        if not hotel_has_access(hotel):
+            raise HTTPException(402, "This hotel's trial has ended. Feedback links reactivate after payment.")
+        conn.execute(
+            """
+            update requests
+            set google_clicked_at = ?, google_click_count = coalesce(google_click_count, 0) + 1
+            where id = ?
+            """,
+            (now(), guest_request["id"]),
+        )
+        payload = list_requests(conn, guest_request["hotel_id"])
+    await broadcast(guest_request["hotel_id"], "requests", payload)
+    return {"ok": True}
 
 @app.post("/api/payments/checkout")
 async def api_checkout(request: Request):
@@ -676,7 +698,9 @@ def init_db() -> None:
               notes text not null,
               sent_at text not null,
               opened_at text,
-              responded_at text
+              responded_at text,
+              google_clicked_at text,
+              google_click_count integer not null default 0
             );
             create table if not exists feedback (
               id integer primary key autoincrement,
@@ -724,6 +748,8 @@ def init_db() -> None:
         ensure_column(conn, "hotels", "subscription_renews_at", "text")
         ensure_column(conn, "hotels", "pending_package_key", "text")
         ensure_column(conn, "hotels", "pending_package_effective_at", "text")
+        ensure_column(conn, "requests", "google_clicked_at", "text")
+        ensure_column(conn, "requests", "google_click_count", "integer not null default 0")
         rows = conn.execute("select id, created_at, trial_ends_at from hotels").fetchall()
         for row in rows:
             if not row["trial_ends_at"]:
@@ -860,6 +886,8 @@ def shape_request(request, feedback) -> dict[str, Any]:
         "sentAt": request["sent_at"],
         "openedAt": request["opened_at"],
         "respondedAt": request["responded_at"],
+        "googleClickedAt": request["google_clicked_at"] if "google_clicked_at" in request.keys() else None,
+        "googleClickCount": request["google_click_count"] if "google_click_count" in request.keys() else 0,
         "feedbackUrl": feedback_url(request["token"]),
     }
 
