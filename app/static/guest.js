@@ -10,8 +10,9 @@ document.querySelectorAll("#stars button").forEach((button) => {
   });
 });
 
-document.querySelector("#google-review-button").addEventListener("click", () => {
-  trackGoogleClick();
+document.querySelector("#google-review-button").addEventListener("click", async (event) => {
+  event.preventDefault();
+  await submitGoogleReviewIntent(event.currentTarget.href);
 });
 
 document.querySelector("#feedback-form").addEventListener("submit", async (event) => {
@@ -20,18 +21,21 @@ document.querySelector("#feedback-form").addEventListener("submit", async (event
     showGuestMessage("Please select a star rating first.");
     return;
   }
-  const comments = new FormData(event.currentTarget).get("comments");
-  const response = await fetch(`/api/public/feedback/${window.feedbackToken}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ rating, comments }),
-  });
-  const payload = await response.json();
-  if (response.ok) {
+  // const comments = new FormData(event.currentTarget).get("comments");
+  // const response = await fetch(`/api/public/feedback/${window.feedbackToken}`, {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ rating, comments }),
+  // });
+  // const payload = await response.json();
+  // if (response.ok) {
+  const result = await submitResponse(`/api/public/feedback/${window.feedbackToken}`);
+  if (result.ok) {
     showSubmittedState();
     return;
   }
-  showGuestMessage(payload.detail || "Feedback could not be submitted.");
+  // showGuestMessage(payload.detail || "Feedback could not be submitted.");
+  showGuestMessage(result.error);
 });
 
 function renderStars() {
@@ -50,29 +54,62 @@ function renderChoice() {
   choice.classList.remove("hidden");
 
   message.textContent = "Thanks for the rating.";
-  privateButton.classList.add("hidden");
-  googleButton.classList.add("hidden");
+  // privateButton.classList.add("hidden");
+  // googleButton.classList.add("hidden");
   privateButton.className = "primary-button hidden";
   googleButton.className = "primary-button hidden";
 
   if (rating >= 3) {
     googleButton.classList.remove("hidden");
+    return;
+  }
+  privateButton.classList.remove("hidden");
+}
     
     // googleButton.className = "primary-button";
     // privateButton.className = "secondary-button";
     // googleButton.style.order = "-1";
     // privateButton.style.order = "0";
     // return;
+  // }
+  // else{
+  //   privateButton.classList.remove("hidden");
+  // }
+async function submitGoogleReviewIntent(googleUrl) {
+  if (!rating) {
+    showGuestMessage("Please select a star rating first.");
+    return;
   }
-  else{
-    privateButton.classList.remove("hidden");
+  const result = await submitResponse(`/api/public/google-click/${window.feedbackToken}`);
+  if (!result.ok) {
+    showGuestMessage(result.error);
+    return;
   }
+  window.location.href = googleUrl;
+}
 
 
   // privateButton.className = "primary-button";
   // googleButton.className = "secondary-button";
   // privateButton.style.order = "-1";
   // googleButton.style.order = "0";
+async function submitResponse(url) {
+  const comments = new FormData(document.querySelector("#feedback-form")).get("comments");
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ rating, comments }),
+  });
+  let payload = {};
+  try {
+    payload = await response.json();
+  } catch {
+    payload = {};
+  }
+  return {
+    ok: response.ok,
+    error: payload.detail || "Response could not be submitted.",
+  };
 }
 
 function showGuestMessage(text) {
@@ -87,11 +124,11 @@ function showSubmittedState() {
   document.querySelector("#submission-confirmation").classList.remove("hidden");
 }
 
-function trackGoogleClick() {
-  const url = `/api/public/google-click/${window.feedbackToken}`;
-  if (navigator.sendBeacon) {
-    navigator.sendBeacon(url);
-    return;
-  }
-  fetch(url, { method: "POST", keepalive: true }).catch(() => {});
-}
+// function trackGoogleClick() {
+//   const url = `/api/public/google-click/${window.feedbackToken}`;
+//   if (navigator.sendBeacon) {
+//     navigator.sendBeacon(url);
+//     return;
+//   }
+//   fetch(url, { method: "POST", keepalive: true }).catch(() => {});
+// }
