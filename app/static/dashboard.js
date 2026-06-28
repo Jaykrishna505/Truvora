@@ -310,7 +310,7 @@ function renderRequests() {
           <td><strong>${escapeHtml(item.guestName)}</strong><span>${escapeHtml(item.email)}</span><span>${escapeHtml(item.phone)}</span><span>${formatDate(item.stayDate)}</span></td>
           <td><span class="status ${item.status}">${item.status}</span></td>
           <td>${ratingCell(item.rating)}</td>
-          <td>${item.comments ? escapeHtml(item.comments) : "Awaiting feedback"}</td>
+          <td>${item.comments ? escapeHtml(item.comments) : "Awaiting feedback"}${completionCell(item)}</td>
           <td><a href="${item.feedbackUrl}" target="_blank">Open</a><button class="tiny-button" data-copy="${item.feedbackUrl}">Copy</button></td>
           <td><a href="${item.feedbackUrl}" target="_blank">Open</a><button class="tiny-button" data-copy="${item.feedbackUrl}">Copy</button>${googleClickCell(item)}</td>
           <td><textarea data-note-id="${item.id}" rows="2">${escapeHtml(item.notes)}</textarea></td>
@@ -351,6 +351,12 @@ function googleClickCell(item) {
   if (!item.googleClickedAt) return `<span class="google-clicked muted">Google not clicked</span>`;
   const count = Number(item.googleClickCount || 0);
   return `<span class="google-clicked">Google clicked ${formatDateTime(item.googleClickedAt)}${count > 1 ? ` (${count} times)` : ""}</span>`;
+}
+
+function completionCell(item) {
+  if (!item.completedAt) return "";
+  const label = item.completionType === "google" ? "Recorded before Google review" : "Private feedback recorded";
+  return `<span class="completion-status">${label} ${formatDateTime(item.completedAt)}</span>`;
 }
 
 function deliveryTone(item) {
