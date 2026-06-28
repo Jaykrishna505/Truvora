@@ -116,6 +116,41 @@ textarea { resize: vertical; }
 .auth-message.success { color: var(--green); border-color: #b7dfce; background: var(--green-soft); }
 .auth-message.error { color: var(--red); border-color: #e2aa9e; background: var(--red-soft); }
 .auth-message a { color: inherit; font-weight: 900; }
+.public-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.public-links a {
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.public-page {
+  width: min(920px, calc(100% - 36px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 36px 0;
+}
+.public-card {
+  margin-top: 18px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow);
+}
+.public-card h1 {
+  max-width: 760px;
+}
+.public-card p {
+  color: var(--muted);
+  line-height: 1.65;
+}
 .message { min-height: 38px; padding: 10px 12px; border-radius: 8px; background: #edf5f9; color: #27556d; font-size: 14px; }
 .message:empty { display: none; }
 .access-banner {
@@ -190,6 +225,13 @@ th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
 .google-clicked.muted {
   color: var(--muted);
   font-weight: 700;
+}
+.completion-status {
+  display: block;
+  margin-top: 8px;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 800;
 }
 .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .request-panel {
