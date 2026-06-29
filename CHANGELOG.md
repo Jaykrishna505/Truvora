@@ -2,6 +2,14 @@
 
 All meaningful platform changes will be tracked here.
 
+## v0.1.14 - Single-Use Feedback Links And Public Pages
+
+- Marks feedback links as completed after private feedback or the Google review path.
+- Saves the guest's rating and comments before redirecting them to Google.
+- Shows an already-recorded message if a completed feedback link is opened again.
+- Shows Google-path recorded feedback in the dashboard.
+- Added About Us, Terms and Conditions, and Privacy Policy pages.
+
 ## v0.1.13 - Google Review Click Tracking
 
 - Tracks when a guest clicks the Google review button.
