@@ -88,6 +88,20 @@ async def auth_page(request: Request):
         return RedirectResponse("/app", status_code=303)
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/about", response_class=HTMLResponse)
+async def about_page(request: Request):
+    return templates.TemplateResponse("about.html", {"request": request})
+
+
+@app.get("/terms", response_class=HTMLResponse)
+async def terms_page(request: Request):
+    return templates.TemplateResponse("terms.html", {"request": request})
+
+
+@app.get("/privacy", response_class=HTMLResponse)
+async def privacy_page(request: Request):
+    return templates.TemplateResponse("privacy.html", {"request": request})
+
 
 @app.post("/register")
 async def register(
@@ -362,6 +376,8 @@ async def api_create_request(request: Request):
                 "responded_at": None,
                 "google_clicked_at": None,
                 "google_click_count": 0,
+                "completed_at": None,
+                "completion_type": None,
             },
         )
         created = conn.execute("select * from requests where id = ?", (request_id,)).fetchone()
@@ -450,32 +466,42 @@ async def api_public_feedback(token: str, request: Request):
         guest_request = conn.execute("select * from requests where token = ?", (token,)).fetchone()
         if not guest_request:
             raise HTTPException(404, "Feedback link not found.")
+        if request_is_completed(guest_request):
+            raise HTTPException(409, "This review request has already been recorded.")
         hotel = get_hotel(conn, guest_request["hotel_id"])
         if not hotel_has_access(hotel):
             raise HTTPException(402, "This hotel's trial has ended. Feedback links reactivate after payment.")
 
-        existing = conn.execute("select id from feedback where request_id = ?", (guest_request["id"],)).fetchone()
-        if existing:
-            conn.execute(
-                "update feedback set rating = ?, comments = ?, updated_at = ? where id = ?",
-                (rating, comments, now(), existing["id"]),
-            )
-        else:
-            insert(
-                conn,
-                "feedback",
-                {
-                    "request_id": guest_request["id"],
-                    "hotel_id": guest_request["hotel_id"],
-                    "rating": rating,
-                    "comments": comments,
-                    "created_at": now(),
-                    "updated_at": now(),
-                },
-            )
+        # existing = conn.execute("select id from feedback where request_id = ?", (guest_request["id"],)).fetchone()
+        # if existing:
+        #     conn.execute(
+        #         "update feedback set rating = ?, comments = ?, updated_at = ? where id = ?",
+        #         (rating, comments, now(), existing["id"]),
+        #     )
+        # else:
+        #     insert(
+        #         conn,
+        #         "feedback",
+        #         {
+        #             "request_id": guest_request["id"],
+        #             "hotel_id": guest_request["hotel_id"],
+        #             "rating": rating,
+        #             "comments": comments,
+        #             "created_at": now(),
+        #             "updated_at": now(),
+        #         },
+        #     )
+        save_feedback(conn, guest_request, rating, comments)
         conn.execute(
-            "update requests set status = ?, responded_at = coalesce(responded_at, ?) where id = ?",
-            ("responded", now(), guest_request["id"]),
+            # "update requests set status = ?, responded_at = coalesce(responded_at, ?) where id = ?",
+            # ("responded", now(), guest_request["id"]),
+            """
+            update requests
+            set status = ?, responded_at = coalesce(responded_at, ?),
+                completed_at = coalesce(completed_at, ?), completion_type = ?
+            where id = ?
+            """,
+            ("responded", now(), now(), "private", guest_request["id"]),
         )
         payload = list_requests(conn, guest_request["hotel_id"])
 
@@ -483,21 +509,34 @@ async def api_public_feedback(token: str, request: Request):
     return {"ok": True}
 
 @app.post("/api/public/google-click/{token}")
-async def api_public_google_click(token: str):
+# async def api_public_google_click(token: str):
+async def api_public_google_click(token: str, request: Request):
+    body = await request.json()
+    rating = int(body.get("rating", 0))
+    comments = clean(body.get("comments"))
+    if rating < 1 or rating > 5:
+        raise HTTPException(400, "Rating must be between 1 and 5.")
     with db() as conn:
         guest_request = conn.execute("select * from requests where token = ?", (token,)).fetchone()
         if not guest_request:
             raise HTTPException(404, "Feedback link not found.")
+        if request_is_completed(guest_request):
+            raise HTTPException(409, "This review request has already been recorded.")
         hotel = get_hotel(conn, guest_request["hotel_id"])
         if not hotel_has_access(hotel):
             raise HTTPException(402, "This hotel's trial has ended. Feedback links reactivate after payment.")
+        clicked_at = now()
+        save_feedback(conn, guest_request, rating, comments)
         conn.execute(
             """
             update requests
-            set google_clicked_at = ?, google_click_count = coalesce(google_click_count, 0) + 1
+            set status = ?, responded_at = coalesce(responded_at, ?),
+                google_clicked_at = ?, google_click_count = coalesce(google_click_count, 0) + 1,
+                completed_at = coalesce(completed_at, ?), completion_type = ?
             where id = ?
             """,
-            (now(), guest_request["id"]),
+            # (now(), guest_request["id"]),
+            ("responded", clicked_at, clicked_at, clicked_at, "google", guest_request["id"]),
         )
         payload = list_requests(conn, guest_request["hotel_id"])
     await broadcast(guest_request["hotel_id"], "requests", payload)
@@ -700,7 +739,9 @@ def init_db() -> None:
               opened_at text,
               responded_at text,
               google_clicked_at text,
-              google_click_count integer not null default 0
+              google_click_count integer not null default 0,
+              completed_at text,
+              completion_type text
             );
             create table if not exists feedback (
               id integer primary key autoincrement,
@@ -750,6 +791,8 @@ def init_db() -> None:
         ensure_column(conn, "hotels", "pending_package_effective_at", "text")
         ensure_column(conn, "requests", "google_clicked_at", "text")
         ensure_column(conn, "requests", "google_click_count", "integer not null default 0")
+        ensure_column(conn, "requests", "completed_at", "text")
+        ensure_column(conn, "requests", "completion_type", "text")
         rows = conn.execute("select id, created_at, trial_ends_at from hotels").fetchall()
         for row in rows:
             if not row["trial_ends_at"]:
@@ -888,6 +931,8 @@ def shape_request(request, feedback) -> dict[str, Any]:
         "respondedAt": request["responded_at"],
         "googleClickedAt": request["google_clicked_at"] if "google_clicked_at" in request.keys() else None,
         "googleClickCount": request["google_click_count"] if "google_click_count" in request.keys() else 0,
+        "completedAt": request["completed_at"] if "completed_at" in request.keys() else None,
+        "completionType": request["completion_type"] if "completion_type" in request.keys() else None,
         "feedbackUrl": feedback_url(request["token"]),
     }
 
@@ -937,7 +982,39 @@ def public_guest_context(conn: sqlite3.Connection, token: str):
         "guestName": row["guest_name"],
         "stayDate": row["stay_date"],
         "googleLink": row["google_link"],
+        "alreadyRecorded": request_is_completed(row),
+        "completedAt": row["completed_at"] if "completed_at" in row.keys() else None,
+        "completionType": row["completion_type"] if "completion_type" in row.keys() else None,
     }
+
+def request_is_completed(request) -> bool:
+    return bool(
+        ("completed_at" in request.keys() and request["completed_at"])
+        or ("completion_type" in request.keys() and request["completion_type"])
+        or ("responded_at" in request.keys() and request["responded_at"])
+    )
+
+
+def save_feedback(conn: sqlite3.Connection, guest_request, rating: int, comments: str) -> None:
+    existing = conn.execute("select id from feedback where request_id = ?", (guest_request["id"],)).fetchone()
+    if existing:
+        conn.execute(
+            "update feedback set rating = ?, comments = ?, updated_at = ? where id = ?",
+            (rating, comments, now(), existing["id"]),
+        )
+        return
+    insert(
+        conn,
+        "feedback",
+        {
+            "request_id": guest_request["id"],
+            "hotel_id": guest_request["hotel_id"],
+            "rating": rating,
+            "comments": comments,
+            "created_at": now(),
+            "updated_at": now(),
+        },
+    )
 
 
 async def send_review_request(conn: sqlite3.Connection, hotel, request) -> dict[str, Any]:
