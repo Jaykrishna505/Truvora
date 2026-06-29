@@ -12,12 +12,14 @@ This is a Python/FastAPI version of the hotel review request platform.
 - Guest request creation
 - Unique public guest feedback links
 - Guest rating and comments
+- Single-use guest feedback links after a response is recorded
+- Private feedback submission for lower ratings
+- Google review redirect for higher ratings
 - Local Google review button click tracking
-- Review flow:
-  - Submit feedback privately
-  - Leave a Google review
+- Rating/comment capture before sending a guest to Google
 - Realtime dashboard updates with Server-Sent Events
 - Delivery log for SMS/email
+- Public About Us, Terms and Conditions, and Privacy Policy pages
 - Brevo SMTP email support
 - Twilio SMS support
 - Stripe Checkout-ready payment flow
@@ -50,6 +52,9 @@ python-realtime-review-platform/
       app.html
       guest.html
       billing.html
+      about.html
+      terms.html
+      privacy.html
     static/
       styles.css
       dashboard.js
@@ -208,6 +213,16 @@ data\app.db
 ```
 
 For production, migrate to PostgreSQL.
+
+## Guest Feedback Flow
+
+Each review request creates a unique guest link. The guest selects a star rating and can add comments.
+
+- Ratings below 3 submit private feedback to the hotel team.
+- Ratings of 3 or higher record the entered rating/comments locally, track the Google review button click, and then redirect the guest to the hotel's Google review link.
+- After either path is completed, opening the same guest link again shows that the review was already recorded.
+
+The platform can record what the guest entered before leaving for Google, but it cannot confirm whether the guest actually submitted a Google review on Google's website.
 
 ## Stop The App
 
