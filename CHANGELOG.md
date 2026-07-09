@@ -2,6 +2,12 @@
 
 All meaningful platform changes will be tracked here.
 
+## v0.1.15 - Client Pitch Deck
+
+- Added a PowerPoint pitch deck for client presentations.
+- Included package details, client talk tracks, compliance positioning, billing terms, and closing slides.
+- Added a generator script so the deck can be recreated after pricing or branding changes.
+
 ## v0.1.14 - Single-Use Feedback Links And Public Pages
 
 - Marks feedback links as completed after private feedback or the Google review path.
