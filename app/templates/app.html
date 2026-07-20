@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Truvora Dashboard</title>
-    <link rel="stylesheet" href="/static/styles.css?v=0.1.14" />
+    <link rel="stylesheet" href="/static/styles.css?v=0.1.16" />
   </head>
   <body class="dashboard-page">
     <div class="shell">
@@ -15,7 +15,7 @@
         </div>
         <nav class="nav">
           <button class="nav-item active" data-view="dashboard">Dashboard</button>
-          <button class="nav-item" data-view="send">Guest entry</button>
+          <button class="nav-item" data-view="send" id="send-nav-label">Entry</button>
           <button class="nav-item" data-view="deliveries">Deliveries</button>
           <button class="nav-item" data-view="settings">Settings</button>
           <button class="nav-item" data-view="billing">Billing</button>
@@ -33,7 +33,7 @@
             <h1 id="page-title">Realtime requests</h1>
           </div>
           <div class="account-chip">
-            <div><strong id="hotel-name">Hotel</strong><span id="account-email">{{ user.email }}</span></div>
+            <div><strong id="business-name">Business</strong><span id="account-email">{{ user.email }}</span></div>
             <form action="/logout" method="post"><button class="secondary-button">Log out</button></form>
           </div>
         </header>
@@ -49,7 +49,7 @@
           </div>
           <div class="panel">
             <div class="panel-heading">
-              <div><h2>Guest activity</h2><p id="live-status">Live connection starting...</p></div>
+              <div><h2 id="activity-heading">Activity</h2><p id="live-status">Live connection starting...</p></div>
               <div class="segmented">
                 <button class="segment active" data-filter="all">All</button>
                 <button class="segment" data-filter="positive">Positive</button>
@@ -58,7 +58,7 @@
             </div>
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Guest</th><th>Status</th><th>Rating</th><th>Comment</th><th>Feedback link</th><th>Follow-up notes</th></tr></thead>
+                <thead><tr><th id="request-person-heading">Person</th><th>Status</th><th>Rating</th><th>Comment</th><th>Feedback link</th><th>Follow-up notes</th></tr></thead>
                 <tbody id="requests-table"></tbody>
               </table>
             </div>
@@ -68,14 +68,14 @@
         <section class="view" id="send-view">
           <form class="panel request-panel" id="request-form">
             <div class="panel-heading request-heading">
-              <div><h2>Send review request</h2><p>Creates a unique guest feedback link and sends/records SMS and email.</p></div>
+              <div><h2>Send review request</h2><p id="request-help">Creates a unique feedback link and sends/records SMS and email.</p></div>
               <button class="primary-button">Send request</button>
             </div>
             <div class="request-fields">
-              <label>Guest name<input name="guestName" required /></label>
+              <label><span id="person-name-label">Name</span><input name="personName" required /></label>
               <label>Email<input name="email" type="email" required /></label>
               <label>Phone<input name="phone" required /></label>
-              <label>Stay date<input name="stayDate" type="date" required /></label>
+              <label><span id="service-date-label">Date</span><input name="serviceDate" type="date" required /></label>
             </div>
             <output id="request-message" class="message wide hidden"></output>
           </form>
@@ -89,7 +89,7 @@
             </div>
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Guest</th><th>Channel</th><th>Provider</th><th>Status</th><th>Message</th><th>Created</th></tr></thead>
+                <thead><tr><th id="delivery-person-heading">Person</th><th>Channel</th><th>Provider</th><th>Status</th><th>Message</th><th>Created</th></tr></thead>
                 <tbody id="deliveries-table"></tbody>
               </table>
             </div>
@@ -100,19 +100,20 @@
           <form class="panel settings-panel" id="settings-form">
             <div class="panel-heading settings-heading">
               <div>
-                <h2>Hotel settings</h2>
-                <p>Manage review links and guest message templates.</p>
+                <h2 id="settings-heading-title">Business settings</h2>
+                <p id="settings-help">Manage review links and message templates.</p>
               </div>
               <button class="primary-button">Save settings</button>
             </div>
             <div class="settings-fields">
-              <label>Hotel name<input name="name" required /></label>
+              <label><span id="business-name-label">Business name</span><input name="name" required /></label>
+              <label>Business type<select name="businessType" id="business-type-select" required></select></label>
               <label>Google Business review link<input name="googleLink" required /></label>
             </div>
             <div class="template-helper">
               <span>Template variables</span>
-              <code>{guest}</code>
-              <code>{hotel}</code>
+              <code>{person}</code>
+              <code>{business}</code>
               <code>{link}</code>
             </div>
             <div class="template-fields">
@@ -139,6 +140,6 @@
       </main>
     </div>
 
-    <script src="/static/dashboard.js?v=0.1.14"></script>
+    <script src="/static/dashboard.js?v=0.1.16"></script>
   </body>
 </html>
