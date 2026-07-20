@@ -1,6 +1,6 @@
 const packageKey = new URLSearchParams(location.search).get("package") || "outreach";
 const labels = {
-  outreach: "Guest Outreach - $149 / month",
+  outreach: "Customer Outreach - $149 / month",
   reputation: "Reputation Management - $249 / month",
   social: "Social Management - $349 / month",
 };
