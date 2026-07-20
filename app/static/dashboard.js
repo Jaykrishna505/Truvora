@@ -5,9 +5,9 @@ let filter = "all";
 
 const titles = {
   dashboard: "Realtime requests",
-  send: "Guest entry",
+  send: "Entry",
   deliveries: "Deliveries",
-  settings: "Hotel settings",
+  settings: "Business settings",
   billing: "Billing",
 };
 
@@ -46,7 +46,7 @@ document.querySelector("#request-form").addEventListener("submit", async (event)
     showOutput(output, result.error);
     return;
   }
-  showOutput(output, `Request created. Guest link: ${result.feedbackUrl}`);
+  showOutput(output, `Request created. Feedback link: ${result.feedbackUrl}`);
   event.currentTarget.reset();
   await loadRequests();
   await loadDeliveries();
@@ -95,13 +95,13 @@ document.querySelector("#package-grid").addEventListener("click", async (event) 
   const button = event.target.closest("[data-package]");
   if (!button) return;
   const packageKey = button.dataset.package;
-  const isPaid = ["active", "cancel_pending"].includes(me.hotel.paymentStatus);
+  const isPaid = ["active", "cancel_pending"].includes(me.business.paymentStatus);
   const endpoint = isPaid ? "/api/payments/package-change" : "/api/payments/checkout";
   const payload = { packageKey };
   if (isPaid) {
-    if (me.hotel.paymentStatus === "cancel_pending") {
+    if (me.business.paymentStatus === "cancel_pending") {
       const choice = prompt(
-        `Your subscription is currently scheduled to expire on ${formatDate(me.hotel.cancellationEffectiveAt)}.\n\nType KEEP to keep that expiry date and schedule the package change.\nType ACTIVE to remove the cancellation and keep the subscription active.`
+        `Your subscription is currently scheduled to expire on ${formatDate(me.business.cancellationEffectiveAt)}.\n\nType KEEP to keep that expiry date and schedule the package change.\nType ACTIVE to remove the cancellation and keep the subscription active.`
       );
       if (!choice) return;
       const normalized = choice.trim().toUpperCase();
@@ -170,44 +170,71 @@ function switchView(viewName) {
   document.querySelectorAll(".view").forEach((view) => view.classList.remove("active"));
   document.querySelector(`#${viewName}-view`).classList.add("active");
   document.querySelectorAll("[data-view]").forEach((button) => button.classList.toggle("active", button.dataset.view === viewName));
-  document.querySelector("#page-title").textContent = titles[viewName];
+  document.querySelector("#page-title").textContent = viewName === "send" ? terms().entryLabel : viewName === "settings" ? `${terms().businessLabel} settings` : titles[viewName];
 }
 
 function renderAccount() {
-  document.querySelector("#hotel-name").textContent = me.hotel.name;
+  renderTerminology();
+  document.querySelector("#business-name").textContent = me.business.name;
   document.querySelector("#account-email").textContent = me.user.email;
-  const activePackage = (me.packages || []).find((item) => item.key === me.hotel.packageKey);
+  const activePackage = (me.packages || []).find((item) => item.key === me.business.packageKey);
   document.querySelector("#plan-name").textContent = activePackage ? activePackage.name : "7-day trial";
-  document.querySelector("#payment-status").textContent = `Payment status: ${me.hotel.paymentStatus}`;
+  document.querySelector("#payment-status").textContent = `Payment status: ${me.business.paymentStatus}`;
   renderPackageExpiry();
   renderCancellationStatus();
   renderAccessBanner();
   renderPackages();
   const form = document.querySelector("#settings-form");
-  form.elements.name.value = me.hotel.name;
-  form.elements.googleLink.value = me.hotel.googleLink;
-  form.elements.smsTemplate.value = me.hotel.smsTemplate;
-  form.elements.emailTemplate.value = me.hotel.emailTemplate;
+  form.elements.name.value = me.business.name;
+  form.elements.businessType.value = me.business.businessType;
+  form.elements.googleLink.value = me.business.googleLink;
+  form.elements.smsTemplate.value = me.business.smsTemplate;
+  form.elements.emailTemplate.value = me.business.emailTemplate;
+}
+
+function renderTerminology() {
+  const copy = terms();
+  titles.send = copy.entryLabel;
+  titles.settings = `${copy.businessLabel} settings`;
+  document.querySelector("#send-nav-label").textContent = copy.entryLabel;
+  document.querySelector("#activity-heading").textContent = copy.activityLabel;
+  document.querySelector("#request-person-heading").textContent = copy.personLabel;
+  document.querySelector("#delivery-person-heading").textContent = copy.personLabel;
+  document.querySelector("#person-name-label").textContent = `${copy.personLabel} name`;
+  document.querySelector("#service-date-label").textContent = copy.dateLabel;
+  document.querySelector("#request-help").textContent = `Creates a unique ${copy.personLabel.toLowerCase()} feedback link and sends/records SMS and email.`;
+  document.querySelector("#settings-heading-title").textContent = `${copy.businessLabel} settings`;
+  document.querySelector("#settings-help").textContent = `Manage review links and ${copy.personLabel.toLowerCase()} message templates.`;
+  document.querySelector("#business-name-label").textContent = `${copy.businessLabel} name`;
+  renderBusinessTypeOptions();
+}
+
+function renderBusinessTypeOptions() {
+  const select = document.querySelector("#business-type-select");
+  if (select.options.length) return;
+  select.innerHTML = (me.businessTypes || [])
+    .map((item) => `<option value="${escapeHtml(item.key)}">${escapeHtml(item.name)}</option>`)
+    .join("");
 }
 
 function renderAccessBanner() {
   const banner = document.querySelector("#access-banner");
-  if (me.hotel.accessActive && me.hotel.accessReason === "trial") {
+  if (me.business.accessActive && me.business.accessReason === "trial") {
     banner.className = "access-banner trial";
-    banner.innerHTML = `<strong>${me.hotel.trialDaysRemaining} trial day${me.hotel.trialDaysRemaining === 1 ? "" : "s"} remaining.</strong><span>Choose a package before the trial ends to keep the platform active.</span>`;
+    banner.innerHTML = `<strong>${me.business.trialDaysRemaining} trial day${me.business.trialDaysRemaining === 1 ? "" : "s"} remaining.</strong><span>Choose a package before the trial ends to keep the platform active.</span>`;
     return;
   }
-  if (me.hotel.accessActive) {
+  if (me.business.accessActive) {
     banner.className = "access-banner active";
-    if (me.hotel.accessReason === "cancel_pending") {
-      banner.innerHTML = `<strong>Cancellation notice active.</strong><span>Service package: ${document.querySelector("#plan-name").textContent}. Expires on ${formatDate(me.hotel.cancellationEffectiveAt)}.</span>`;
+    if (me.business.accessReason === "cancel_pending") {
+      banner.innerHTML = `<strong>Cancellation notice active.</strong><span>Service package: ${document.querySelector("#plan-name").textContent}. Expires on ${formatDate(me.business.cancellationEffectiveAt)}.</span>`;
       return;
     }
     banner.innerHTML = `<strong>Platform active.</strong><span>Your ${document.querySelector("#plan-name").textContent} package is active.</span>`;
     return;
   }
   banner.className = "access-banner expired";
-  if (me.hotel.accessReason === "cancelled") {
+  if (me.business.accessReason === "cancelled") {
     banner.innerHTML = `<strong>Your package has ended.</strong><span>Choose a package in Billing to reactivate guest messaging and feedback links.</span>`;
     return;
   }
@@ -216,16 +243,16 @@ function renderAccessBanner() {
 
 function renderPackageExpiry() {
   const expiry = document.querySelector("#package-expiry");
-  if (me.hotel.paymentStatus === "cancel_pending" && me.hotel.cancellationEffectiveAt) {
-    expiry.textContent = `Package expires: ${formatDate(me.hotel.cancellationEffectiveAt)}`;
+  if (me.business.paymentStatus === "cancel_pending" && me.business.cancellationEffectiveAt) {
+    expiry.textContent = `Package expires: ${formatDate(me.business.cancellationEffectiveAt)}`;
     return;
   }
-  if (me.hotel.subscriptionRenewsAt && ["active", "cancel_pending"].includes(me.hotel.paymentStatus)) {
-    expiry.textContent = `Next renewal: ${formatDate(me.hotel.subscriptionRenewsAt)}`;
+  if (me.business.subscriptionRenewsAt && ["active", "cancel_pending"].includes(me.business.paymentStatus)) {
+    expiry.textContent = `Next renewal: ${formatDate(me.business.subscriptionRenewsAt)}`;
     return;
   }
-  if (me.hotel.accessReason === "trial" && me.hotel.trialEndsAt) {
-    expiry.textContent = `Trial expires: ${formatDate(me.hotel.trialEndsAt)}`;
+  if (me.business.accessReason === "trial" && me.business.trialEndsAt) {
+    expiry.textContent = `Trial expires: ${formatDate(me.business.trialEndsAt)}`;
     return;
   }
   expiry.textContent = "";
@@ -236,23 +263,23 @@ function renderCancellationStatus() {
   const button = document.querySelector("#cancel-package-button");
   button.classList.add("hidden");
 
-  if (me.hotel.pendingPackageKey) {
-    const pendingPackage = (me.packages || []).find((item) => item.key === me.hotel.pendingPackageKey);
-    const pendingText = `${pendingPackage ? pendingPackage.name : "Package change"} starts on ${formatDate(me.hotel.pendingPackageEffectiveAt)}. Current package remains active until then.`;
-    if (me.hotel.paymentStatus === "cancel_pending") {
-      status.textContent = `${pendingText} Cancellation is still scheduled for ${formatDate(me.hotel.cancellationEffectiveAt)}.`;
+  if (me.business.pendingPackageKey) {
+    const pendingPackage = (me.packages || []).find((item) => item.key === me.business.pendingPackageKey);
+    const pendingText = `${pendingPackage ? pendingPackage.name : "Package change"} starts on ${formatDate(me.business.pendingPackageEffectiveAt)}. Current package remains active until then.`;
+    if (me.business.paymentStatus === "cancel_pending") {
+      status.textContent = `${pendingText} Cancellation is still scheduled for ${formatDate(me.business.cancellationEffectiveAt)}.`;
       return;
     }
     status.textContent = `${pendingText} Subscription remains active.`;
     return;
   }
 
-  if (me.hotel.paymentStatus === "cancel_pending") {
+  if (me.business.paymentStatus === "cancel_pending") {
     status.textContent = `Cancellation requested. Your package remains active until ${formatDate(me.hotel.cancellationEffectiveAt)}.`;
     return;
   }
 
-  if (me.hotel.paymentStatus === "active") {
+  if (me.business.paymentStatus === "active") {
     status.textContent = "Cancellation requires 60 days notice. Service remains active through the notice period.";
     button.classList.remove("hidden");
     return;
@@ -265,10 +292,10 @@ function renderPackages() {
   const grid = document.querySelector("#package-grid");
   grid.innerHTML = (me.packages || [])
     .map((pkg) => {
-      const active = me.hotel.packageKey === pkg.key && ["active", "cancel_pending"].includes(me.hotel.paymentStatus);
-      const pending = me.hotel.pendingPackageKey === pkg.key;
-      const paid = ["active", "cancel_pending"].includes(me.hotel.paymentStatus);
-      const buttonLabel = active ? "Current package" : pending ? `Starts ${formatDate(me.hotel.pendingPackageEffectiveAt)}` : paid ? "Change next renewal" : `Choose $${pkg.price}`;
+      const active = me.business.packageKey === pkg.key && ["active", "cancel_pending"].includes(me.business.paymentStatus);
+      const pending = me.business.pendingPackageKey === pkg.key;
+      const paid = ["active", "cancel_pending"].includes(me.business.paymentStatus);
+      const buttonLabel = active ? "Current package" : pending ? `Starts ${formatDate(me.business.pendingPackageEffectiveAt)}` : paid ? "Change next renewal" : `Choose $${pkg.price}`;
       return `
         <article class="plan-card package-card ${active ? "selected" : ""} ${pending ? "pending" : ""}">
           <p class="eyebrow">${active ? "Active package" : pending ? "Pending change" : "Package"}</p>
@@ -307,7 +334,7 @@ function renderRequests() {
     .map(
       (item) => `
         <tr>
-          <td><strong>${escapeHtml(item.guestName)}</strong><span>${escapeHtml(item.email)}</span><span>${escapeHtml(item.phone)}</span><span>${formatDate(item.stayDate)}</span></td>
+          <td><strong>${escapeHtml(item.personName)}</strong><span>${escapeHtml(item.email)}</span><span>${escapeHtml(item.phone)}</span><span>${formatDate(item.serviceDate)}</span></td>
           <td><span class="status ${item.status}">${item.status}</span></td>
           <td>${ratingCell(item.rating)}</td>
           <td>${item.comments ? escapeHtml(item.comments) : "Awaiting feedback"}${completionCell(item)}</td>
@@ -330,7 +357,7 @@ function renderDeliveries() {
     .map(
       (item) => `
         <tr>
-          <td><strong>${escapeHtml(item.guestName)}</strong><span>${escapeHtml(item.guestEmail || item.guestPhone)}</span></td>
+          <td><strong>${escapeHtml(item.personName)}</strong><span>${escapeHtml(item.personEmail || item.personPhone)}</span></td>
           <td>${escapeHtml(item.channel)}</td>
           <td>${escapeHtml(item.provider)}</td>
           <td><span class="status ${deliveryTone(item)}">${escapeHtml(item.status)}</span></td>
@@ -393,4 +420,14 @@ function escapeHtml(value) {
 function showOutput(output, text) {
   output.value = text;
   output.classList.toggle("hidden", !text);
+}
+
+function terms() {
+  return me.terms || {
+    businessLabel: "Business",
+    personLabel: "Customer",
+    entryLabel: "Customer entry",
+    activityLabel: "Customer activity",
+    dateLabel: "Visit date",
+  };
 }
