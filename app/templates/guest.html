@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Guest Feedback | Truvora Python</title>
-    <link rel="stylesheet" href="/static/styles.css?v=0.1.14" />
+    <title>Feedback | Truvora</title>
+    <link rel="stylesheet" href="/static/styles.css?v=0.1.16" />
   </head>
   <body class="guest-body">
     <main class="guest-layout">
       <section class="guest-hero">
-        <p class="eyebrow">Guest feedback</p>
-        <h1>How was your stay at {{ guest.hotelName }}?</h1>
-        <p>{{ guest.guestName }}, share private feedback with the hotel team or leave a Google review.</p>
+        <p class="eyebrow">{{ guest.terms.feedbackEyebrow }}</p>
+        <h1>{{ guest.experienceQuestion }}</h1>
+        <p>{{ guest.feedbackIntro }}</p>
       </section>
       <!-- <form class="guest-card" id="feedback-form">
         <div class="guest-form-fields" id="guest-form-fields"> -->
@@ -53,7 +53,7 @@
         <section class="submission-confirmation hidden" id="submission-confirmation" aria-live="polite">
           <p class="eyebrow">Review recorded</p>
           <h2>Thank you for sharing your response.</h2>
-          <p>Your response has been sent to the hotel team. You can close this page.</p>
+          <p>{{ guest.privateConfirmation }}</p>
         </section>
         <output id="guest-message" class="message hidden"></output>
         {% endif %}
@@ -63,7 +63,7 @@
       window.feedbackToken = "{{ token }}";
     </script>
     {% if not guest.alreadyRecorded %}
-    <script src="/static/guest.js?v=0.1.14"></script>
+    <script src="/static/guest.js?v=0.1.16"></script>
     {% endif %}
   </body>
 </html>
