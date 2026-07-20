@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Truvora Python | Sign in</title>
-    <link rel="stylesheet" href="/static/styles.css?v=0.1.14" />
+    <title>Truvora | Sign in</title>
+    <link rel="stylesheet" href="/static/styles.css?v=0.1.16" />
   </head>
   <body class="auth-page">
     <main class="auth-layout">
@@ -24,7 +24,18 @@
         </div>
 
         <form class="auth-form" id="register-form">
-          <label>Hotel name<input name="hotelName" required placeholder="Test Hotel" /></label>
+          <label>Business name<input name="businessName" required placeholder="Your Business" /></label>
+          <label>Business type
+            <select name="businessType" required>
+              <option value="hotel">Hotel</option>
+              <option value="restaurant">Restaurant</option>
+              <option value="salon_spa">Salon / Spa</option>
+              <option value="auto_service">Auto Service</option>
+              <option value="healthcare">Dental / Medical</option>
+              <option value="home_services">Home Services</option>
+              <option value="other">Other Local Business</option>
+            </select>
+          </label>
           <label>Email<input name="email" type="email" required placeholder="owner@example.com" /></label>
           <label>Password<input name="password" type="password" minlength="8" required placeholder="At least 8 characters" /></label>
           <button class="primary-button" type="submit">Create account</button>
