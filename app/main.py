@@ -45,10 +45,10 @@ SESSION_SECRET = os.getenv("SESSION_SECRET", "local-development-secret")
 PACKAGES = {
     "outreach": {
         "key": "outreach",
-        "name": "Guest Outreach",
+        "name": "Customer Outreach",
         "price": 149,
-        "description": "SMS and email review requests to guests.",
-        "features": ["SMS review requests", "Email review requests", "Guest feedback dashboard", "Delivery logs"],
+        "description": "SMS and email review requests to customers, guests, clients, or patients.",
+        "features": ["SMS review requests", "Email review requests", "Feedback dashboard", "Delivery logs"],
         "stripe_env": "STRIPE_PRICE_ID_OUTREACH",
     },
     "reputation": {
@@ -56,7 +56,7 @@ PACKAGES = {
         "name": "Reputation Management",
         "price": 249,
         "description": "SMS/email outreach plus replying to online reviews.",
-        "features": ["Everything in Guest Outreach", "Online review reply management", "Follow-up notes", "Reputation workflow"],
+        "features": ["Everything in Customer Outreach", "Online review reply management", "Follow-up notes", "Reputation workflow"],
         "stripe_env": "STRIPE_PRICE_ID_REPUTATION",
     },
     "social": {
@@ -66,6 +66,121 @@ PACKAGES = {
         "description": "Outreach, review replies, and social media post management.",
         "features": ["Everything in Reputation Management", "Facebook post management", "Social content coordination", "Premium service workflow"],
         "stripe_env": "STRIPE_PRICE_ID_SOCIAL",
+    },
+}
+
+BUSINESS_TYPES = {
+    "hotel": {
+        "key": "hotel",
+        "name": "Hotel",
+        "businessLabel": "Hotel",
+        "personLabel": "Guest",
+        "dateLabel": "Stay date",
+        "entryLabel": "Guest entry",
+        "activityLabel": "Guest activity",
+        "feedbackEyebrow": "Guest feedback",
+        "experienceQuestion": "How was your stay at {business}?",
+        "feedbackIntro": "{person}, share private feedback with the hotel team or leave a Google review.",
+        "privateConfirmation": "Your response has been sent to the hotel team. You can close this page.",
+        "smsTemplate": "Hi {person}, thanks for staying at {business}. Share feedback here: {link}",
+        "emailTemplate": "Hello {person},\n\nThank you for staying at {business}. Share feedback here: {link}",
+        "emailSubject": "How was your stay at {business}?",
+    },
+    "restaurant": {
+        "key": "restaurant",
+        "name": "Restaurant",
+        "businessLabel": "Restaurant",
+        "personLabel": "Customer",
+        "dateLabel": "Visit date",
+        "entryLabel": "Customer entry",
+        "activityLabel": "Customer activity",
+        "feedbackEyebrow": "Customer feedback",
+        "experienceQuestion": "How was your visit to {business}?",
+        "feedbackIntro": "{person}, share private feedback with the business or leave a Google review.",
+        "privateConfirmation": "Your response has been sent to the business. You can close this page.",
+        "smsTemplate": "Hi {person}, thanks for visiting {business}. Share feedback here: {link}",
+        "emailTemplate": "Hello {person},\n\nThank you for visiting {business}. Share feedback here: {link}",
+        "emailSubject": "How was your visit to {business}?",
+    },
+    "salon_spa": {
+        "key": "salon_spa",
+        "name": "Salon / Spa",
+        "businessLabel": "Business",
+        "personLabel": "Client",
+        "dateLabel": "Appointment date",
+        "entryLabel": "Client entry",
+        "activityLabel": "Client activity",
+        "feedbackEyebrow": "Client feedback",
+        "experienceQuestion": "How was your appointment with {business}?",
+        "feedbackIntro": "{person}, share private feedback with the business or leave a Google review.",
+        "privateConfirmation": "Your response has been sent to the business. You can close this page.",
+        "smsTemplate": "Hi {person}, thanks for choosing {business}. Share feedback here: {link}",
+        "emailTemplate": "Hello {person},\n\nThank you for choosing {business}. Share feedback here: {link}",
+        "emailSubject": "How was your appointment with {business}?",
+    },
+    "auto_service": {
+        "key": "auto_service",
+        "name": "Auto Service",
+        "businessLabel": "Business",
+        "personLabel": "Customer",
+        "dateLabel": "Service date",
+        "entryLabel": "Customer entry",
+        "activityLabel": "Customer activity",
+        "feedbackEyebrow": "Customer feedback",
+        "experienceQuestion": "How was your service with {business}?",
+        "feedbackIntro": "{person}, share private feedback with the business or leave a Google review.",
+        "privateConfirmation": "Your response has been sent to the business. You can close this page.",
+        "smsTemplate": "Hi {person}, thanks for choosing {business}. Share feedback here: {link}",
+        "emailTemplate": "Hello {person},\n\nThank you for choosing {business}. Share feedback here: {link}",
+        "emailSubject": "How was your service with {business}?",
+    },
+    "healthcare": {
+        "key": "healthcare",
+        "name": "Dental / Medical",
+        "businessLabel": "Practice",
+        "personLabel": "Patient",
+        "dateLabel": "Visit date",
+        "entryLabel": "Patient entry",
+        "activityLabel": "Patient activity",
+        "feedbackEyebrow": "Patient feedback",
+        "experienceQuestion": "How was your visit with {business}?",
+        "feedbackIntro": "{person}, share private feedback with the practice or leave a Google review.",
+        "privateConfirmation": "Your response has been sent to the practice. You can close this page.",
+        "smsTemplate": "Hi {person}, thanks for visiting {business}. Share feedback here: {link}",
+        "emailTemplate": "Hello {person},\n\nThank you for visiting {business}. Share feedback here: {link}",
+        "emailSubject": "How was your visit with {business}?",
+    },
+    "home_services": {
+        "key": "home_services",
+        "name": "Home Services",
+        "businessLabel": "Business",
+        "personLabel": "Customer",
+        "dateLabel": "Service date",
+        "entryLabel": "Customer entry",
+        "activityLabel": "Customer activity",
+        "feedbackEyebrow": "Customer feedback",
+        "experienceQuestion": "How was your service with {business}?",
+        "feedbackIntro": "{person}, share private feedback with the business or leave a Google review.",
+        "privateConfirmation": "Your response has been sent to the business. You can close this page.",
+        "smsTemplate": "Hi {person}, thanks for choosing {business}. Share feedback here: {link}",
+        "emailTemplate": "Hello {person},\n\nThank you for choosing {business}. Share feedback here: {link}",
+        "emailSubject": "How was your service with {business}?",
+    },
+    "other": {
+        "key": "other",
+        "name": "Other Local Business",
+        "businessLabel": "Business",
+        "personLabel": "Customer",
+        "dateLabel": "Visit date",
+        "entryLabel": "Customer entry",
+        "activityLabel": "Customer activity",
+        "feedbackEyebrow": "Customer feedback",
+        "experienceQuestion": "How was your experience with {business}?",
+        "feedbackIntro": "{person}, share private feedback with the business or leave a Google review.",
+        "privateConfirmation": "Your response has been sent to the business. You can close this page.",
+        "smsTemplate": "Hi {person}, thanks for choosing {business}. Share feedback here: {link}",
+        "emailTemplate": "Hello {person},\n\nThank you for choosing {business}. Share feedback here: {link}",
+        "emailSubject": "How was your experience with {business}?",
     },
 }
 
@@ -105,47 +220,30 @@ async def privacy_page(request: Request):
 
 @app.post("/register")
 async def register(
-    hotel_name: str = Form(...),
+    business_name: str = Form(..., alias="businessName"),
+    business_type: str = Form("hotel", alias="businessType"),
     email: str = Form(...),
     password: str = Form(...),
 ):
     email = email.strip().lower()
-    hotel_name = hotel_name.strip()
-    if not hotel_name or "@" not in email or len(password) < 8:
-        raise HTTPException(400, "Hotel name, valid email, and 8+ character password are required.")
+    business_name = business_name.strip()
+    business_type = normalize_business_type(business_type)
+    if not business_name or "@" not in email or len(password) < 8:
+        raise HTTPException(400, "Business name, valid email, and 8+ character password are required.")
 
     with db() as conn:
         existing = conn.execute("select id from users where email = ?", (email,)).fetchone()
         if existing:
             raise HTTPException(409, "An account already exists for this email.")
 
-        hotel_id = insert(
-            conn,
-            "hotels",
-            {
-                "name": hotel_name,
-                "google_link": "https://www.google.com/search?q=hotel+reviews",
-                "sms_template": "Hi {guest}, thanks for staying at {hotel}. Share feedback here: {link}",
-                "email_template": "Hello {guest},\n\nThank you for staying at {hotel}. Share feedback here: {link}",
-                "plan": "trial",
-                "payment_status": "trial",
-                "package_key": None,
-                "trial_ends_at": trial_end(),
-                "cancellation_requested_at": None,
-                "cancellation_effective_at": None,
-                "subscription_renews_at": None,
-                "pending_package_key": None,
-                "pending_package_effective_at": None,
-                "created_at": now(),
-            },
-        )
+        business_id = create_business(conn, business_name, business_type)
         user_id = insert(
             conn,
             "users",
             {
                 "email": email,
                 "password_hash": hash_password(password),
-                "hotel_id": hotel_id,
+                "business_id": business_id,
                 "created_at": now(),
             },
         )
@@ -170,23 +268,24 @@ async def login(email: str = Form(...), password: str = Form(...)):
 @app.post("/api/auth/register")
 async def api_register(request: Request):
     body = await request.json()
-    hotel_name = clean(body.get("hotelName"))
+    business_name = clean(body.get("businessName"))
+    business_type = normalize_business_type(body.get("businessType"))
     email = clean(body.get("email")).lower()
     password = str(body.get("password") or "")
-    if not hotel_name or "@" not in email or len(password) < 8:
-        raise HTTPException(400, "Hotel name, valid email, and 8+ character password are required.")
+    if not business_name or "@" not in email or len(password) < 8:
+        raise HTTPException(400, "Business name, valid email, and 8+ character password are required.")
 
     with db() as conn:
         if conn.execute("select id from users where email = ?", (email,)).fetchone():
             raise HTTPException(409, "An account already exists for this email.")
-        hotel_id = create_hotel(conn, hotel_name)
+        business_id = create_business(conn, business_name, business_type)
         user_id = insert(
             conn,
             "users",
             {
                 "email": email,
                 "password_hash": hash_password(password),
-                "hotel_id": hotel_id,
+                "business_id": business_id,
                 "created_at": now(),
             },
         )
@@ -322,21 +421,22 @@ async def api_settings(request: Request):
     with db() as conn:
         conn.execute(
             """
-            update hotels
-            set name = ?, google_link = ?, sms_template = ?, email_template = ?
+            update businesses
+            set name = ?, business_type = ?, google_link = ?, sms_template = ?, email_template = ?
             where id = ?
             """,
             (
                 clean(body.get("name")),
+                normalize_business_type(body.get("businessType")),
                 clean(body.get("googleLink")),
                 clean(body.get("smsTemplate")),
                 clean(body.get("emailTemplate")),
-                user["hotel_id"],
+                user["business_id"],
             ),
         )
         conn.commit()
         payload = user_context(user)
-    await broadcast(user["hotel_id"], "settings", payload)
+    await broadcast(user["business_id"], "settings", payload)
     return payload
 
 
@@ -344,7 +444,7 @@ async def api_settings(request: Request):
 async def api_requests(request: Request):
     user = require_user(request)
     with db() as conn:
-        return list_requests(conn, user["hotel_id"])
+        return list_requests(conn, user["business_id"])
 
 
 @app.post("/api/requests")
@@ -352,22 +452,22 @@ async def api_create_request(request: Request):
     user = require_user(request)
     require_platform_access(user)
     body = await request.json()
-    required = ["guestName", "phone", "email", "stayDate"]
+    required = ["personName", "phone", "email", "serviceDate"]
     if any(not clean(body.get(field)) for field in required):
-        raise HTTPException(400, "Guest name, phone, email, and stay date are required.")
+        raise HTTPException(400, "Name, phone, email, and date are required.")
 
     token = secrets.token_urlsafe(24)
     with db() as conn:
-        hotel = get_hotel(conn, user["hotel_id"])
+        business = get_business(conn, user["business_id"])
         request_id = insert(
             conn,
-            "requests",
+            "review_requests",
             {
-                "hotel_id": user["hotel_id"],
-                "guest_name": clean(body["guestName"]),
+                "business_id": user["business_id"],
+                "person_name": clean(body["personName"]),
                 "phone": clean(body["phone"]),
                 "email": clean(body["email"]).lower(),
-                "stay_date": clean(body["stayDate"]),
+                "service_date": clean(body["serviceDate"]),
                 "token": token,
                 "status": "sent",
                 "notes": "",
@@ -380,13 +480,13 @@ async def api_create_request(request: Request):
                 "completion_type": None,
             },
         )
-        created = conn.execute("select * from requests where id = ?", (request_id,)).fetchone()
-        delivery = await send_review_request(conn, hotel, created)
-        requests_payload = list_requests(conn, user["hotel_id"])
-        deliveries_payload = list_deliveries(conn, user["hotel_id"])
+        created = conn.execute("select * from review_requests where id = ?", (request_id,)).fetchone()
+        delivery = await send_review_request(conn, business, created)
+        requests_payload = list_requests(conn, user["business_id"])
+        deliveries_payload = list_deliveries(conn, user["business_id"])
 
-    await broadcast(user["hotel_id"], "requests", requests_payload)
-    await broadcast(user["hotel_id"], "deliveries", deliveries_payload)
+    await broadcast(user["business_id"], "requests", requests_payload)
+    await broadcast(user["business_id"], "deliveries", deliveries_payload)
     return {**shape_request(created, None), "feedbackUrl": feedback_url(token), "delivery": delivery}
 
 
@@ -397,11 +497,11 @@ async def api_update_notes(request_id: int, request: Request):
     body = await request.json()
     with db() as conn:
         conn.execute(
-            "update requests set notes = ? where id = ? and hotel_id = ?",
-            (str(body.get("notes", "")), request_id, user["hotel_id"]),
+            "update review_requests set notes = ? where id = ? and business_id = ?",
+            (str(body.get("notes", "")), request_id, user["business_id"]),
         )
-        payload = list_requests(conn, user["hotel_id"])
-    await broadcast(user["hotel_id"], "requests", payload)
+        payload = list_requests(conn, user["business_id"])
+    await broadcast(user["business_id"], "requests", payload)
     return {"ok": True}
 
 
@@ -409,15 +509,15 @@ async def api_update_notes(request_id: int, request: Request):
 async def api_deliveries(request: Request):
     user = require_user(request)
     with db() as conn:
-        return list_deliveries(conn, user["hotel_id"])
+        return list_deliveries(conn, user["business_id"])
 
 
 @app.get("/api/realtime")
 async def api_realtime(request: Request):
     user = require_user(request)
     queue: asyncio.Queue = asyncio.Queue()
-    hotel_id = user["hotel_id"]
-    subscribers.setdefault(hotel_id, set()).add(queue)
+    business_id = user["business_id"]
+    subscribers.setdefault(business_id, set()).add(queue)
 
     async def events():
         try:
@@ -426,7 +526,7 @@ async def api_realtime(request: Request):
                 event, payload = await queue.get()
                 yield sse(event, payload)
         finally:
-            subscribers.get(hotel_id, set()).discard(queue)
+            subscribers.get(business_id, set()).discard(queue)
 
     return StreamingResponse(events(), media_type="text/event-stream")
 
@@ -434,23 +534,25 @@ async def api_realtime(request: Request):
 @app.get("/api/public/request/{token}")
 async def api_public_request(token: str):
     with db() as conn:
-        request = conn.execute("select * from requests where token = ?", (token,)).fetchone()
+        request = conn.execute("select * from review_requests where token = ?", (token,)).fetchone()
         if not request:
             raise HTTPException(404, "Feedback link not found.")
-        hotel = get_hotel(conn, request["hotel_id"])
-        if not hotel_has_access(hotel):
-            raise HTTPException(402, "This hotel's trial has ended. Feedback links reactivate after payment.")
+        business = get_business(conn, request["business_id"])
+        if not business_has_access(business):
+            raise HTTPException(402, "This business's trial has ended. Feedback links reactivate after payment.")
         if request["status"] == "sent":
             conn.execute(
-                "update requests set status = ?, opened_at = ? where id = ?",
+                "update review_requests set status = ?, opened_at = ? where id = ?",
                 ("opened", now(), request["id"]),
             )
-            await broadcast(request["hotel_id"], "requests", list_requests(conn, request["hotel_id"]))
+            await broadcast(request["business_id"], "requests", list_requests(conn, request["business_id"]))
+        terms = terminology(business["business_type"])
         return {
-            "hotelName": hotel["name"],
-            "guestName": request["guest_name"],
-            "stayDate": request["stay_date"],
-            "googleLink": hotel["google_link"],
+            "businessName": business["name"],
+            "personName": request["person_name"],
+            "serviceDate": request["service_date"],
+            "googleLink": business["google_link"],
+            "terms": terms,
         }
 
 
@@ -463,49 +565,28 @@ async def api_public_feedback(token: str, request: Request):
         raise HTTPException(400, "Rating must be between 1 and 5.")
 
     with db() as conn:
-        guest_request = conn.execute("select * from requests where token = ?", (token,)).fetchone()
-        if not guest_request:
+        review_request = conn.execute("select * from review_requests where token = ?", (token,)).fetchone()
+        if not review_request:
             raise HTTPException(404, "Feedback link not found.")
-        if request_is_completed(guest_request):
+        if request_is_completed(review_request):
             raise HTTPException(409, "This review request has already been recorded.")
-        hotel = get_hotel(conn, guest_request["hotel_id"])
-        if not hotel_has_access(hotel):
-            raise HTTPException(402, "This hotel's trial has ended. Feedback links reactivate after payment.")
+        business = get_business(conn, review_request["business_id"])
+        if not business_has_access(business):
+            raise HTTPException(402, "This business's trial has ended. Feedback links reactivate after payment.")
 
-        # existing = conn.execute("select id from feedback where request_id = ?", (guest_request["id"],)).fetchone()
-        # if existing:
-        #     conn.execute(
-        #         "update feedback set rating = ?, comments = ?, updated_at = ? where id = ?",
-        #         (rating, comments, now(), existing["id"]),
-        #     )
-        # else:
-        #     insert(
-        #         conn,
-        #         "feedback",
-        #         {
-        #             "request_id": guest_request["id"],
-        #             "hotel_id": guest_request["hotel_id"],
-        #             "rating": rating,
-        #             "comments": comments,
-        #             "created_at": now(),
-        #             "updated_at": now(),
-        #         },
-        #     )
-        save_feedback(conn, guest_request, rating, comments)
+        save_feedback(conn, review_request, rating, comments)
         conn.execute(
-            # "update requests set status = ?, responded_at = coalesce(responded_at, ?) where id = ?",
-            # ("responded", now(), guest_request["id"]),
             """
-            update requests
+            update review_requests
             set status = ?, responded_at = coalesce(responded_at, ?),
                 completed_at = coalesce(completed_at, ?), completion_type = ?
             where id = ?
             """,
-            ("responded", now(), now(), "private", guest_request["id"]),
+            ("responded", now(), now(), "private", review_request["id"]),
         )
-        payload = list_requests(conn, guest_request["hotel_id"])
+        payload = list_requests(conn, review_request["business_id"])
 
-    await broadcast(guest_request["hotel_id"], "requests", payload)
+    await broadcast(review_request["business_id"], "requests", payload)
     return {"ok": True}
 
 @app.post("/api/public/google-click/{token}")
@@ -517,29 +598,28 @@ async def api_public_google_click(token: str, request: Request):
     if rating < 1 or rating > 5:
         raise HTTPException(400, "Rating must be between 1 and 5.")
     with db() as conn:
-        guest_request = conn.execute("select * from requests where token = ?", (token,)).fetchone()
-        if not guest_request:
+        review_request = conn.execute("select * from review_requests where token = ?", (token,)).fetchone()
+        if not review_request:
             raise HTTPException(404, "Feedback link not found.")
-        if request_is_completed(guest_request):
+        if request_is_completed(review_request):
             raise HTTPException(409, "This review request has already been recorded.")
-        hotel = get_hotel(conn, guest_request["hotel_id"])
-        if not hotel_has_access(hotel):
-            raise HTTPException(402, "This hotel's trial has ended. Feedback links reactivate after payment.")
+        business = get_business(conn, review_request["business_id"])
+        if not business_has_access(business):
+            raise HTTPException(402, "This business's trial has ended. Feedback links reactivate after payment.")
         clicked_at = now()
-        save_feedback(conn, guest_request, rating, comments)
+        save_feedback(conn, review_request, rating, comments)
         conn.execute(
             """
-            update requests
+            update review_requests
             set status = ?, responded_at = coalesce(responded_at, ?),
                 google_clicked_at = ?, google_click_count = coalesce(google_click_count, 0) + 1,
                 completed_at = coalesce(completed_at, ?), completion_type = ?
             where id = ?
             """,
-            # (now(), guest_request["id"]),
-            ("responded", clicked_at, clicked_at, clicked_at, "google", guest_request["id"]),
+            ("responded", clicked_at, clicked_at, clicked_at, "google", review_request["id"]),
         )
-        payload = list_requests(conn, guest_request["hotel_id"])
-    await broadcast(guest_request["hotel_id"], "requests", payload)
+        payload = list_requests(conn, review_request["business_id"])
+    await broadcast(review_request["business_id"], "requests", payload)
     return {"ok": True}
 
 @app.post("/api/payments/checkout")
@@ -548,8 +628,8 @@ async def api_checkout(request: Request):
     body = await request.json()
     package_key = package_from_body(body)
     with db() as conn:
-        hotel = get_hotel(conn, user["hotel_id"])
-        if hotel["payment_status"] in {"active", "cancel_pending"}:
+        business = get_business(conn, user["business_id"])
+        if business["payment_status"] in {"active", "cancel_pending"}:
             raise HTTPException(400, "Package changes for active accounts are scheduled for the next renewal date.")
     stripe_price_id = stripe_price_for_package(package_key)
     if not os.getenv("STRIPE_SECRET_KEY") or not stripe_price_id:
@@ -565,9 +645,9 @@ async def api_checkout(request: Request):
                 "line_items[0][quantity]": "1",
                 "success_url": f"{APP_URL}/app?paid=success",
                 "cancel_url": f"{APP_URL}/billing?paid=cancelled",
-                "client_reference_id": str(user["hotel_id"]),
+                "client_reference_id": str(user["business_id"]),
                 "customer_email": user["email"],
-                "metadata[hotel_id]": str(user["hotel_id"]),
+                "metadata[business_id]": str(user["business_id"]),
                 "metadata[package_key]": package_key,
             },
         )
@@ -583,13 +663,13 @@ async def api_simulate_payment(request: Request):
     body = await request.json()
     package_key = package_from_body(body)
     with db() as conn:
-        hotel = get_hotel(conn, user["hotel_id"])
-        if hotel["payment_status"] in {"active", "cancel_pending"}:
+        business = get_business(conn, user["business_id"])
+        if business["payment_status"] in {"active", "cancel_pending"}:
             raise HTTPException(400, "Package changes for active accounts are scheduled for the next renewal date.")
-        activate_hotel(conn, user["hotel_id"], package_key, "local", None)
+        activate_business(conn, user["business_id"], package_key, "local", None)
         conn.commit()
         payload = user_context(user)
-    await broadcast(user["hotel_id"], "billing", payload)
+    await broadcast(user["business_id"], "billing", payload)
     return payload
 
 
@@ -597,25 +677,25 @@ async def api_simulate_payment(request: Request):
 async def api_request_cancellation(request: Request):
     user = require_user(request)
     with db() as conn:
-        hotel = get_hotel(conn, user["hotel_id"])
-        if hotel["payment_status"] not in {"active", "cancel_pending"}:
+        business = get_business(conn, user["business_id"])
+        if business["payment_status"] not in {"active", "cancel_pending"}:
             raise HTTPException(400, "Only active paid packages can be cancelled.")
-        if hotel["payment_status"] != "cancel_pending":
+        if business["payment_status"] != "cancel_pending":
             requested_at = now()
             effective_at = notice_period_end(requested_at)
             conn.execute(
                 """
-                update hotels
+                update businesses
                 set payment_status = ?, cancellation_requested_at = ?, cancellation_effective_at = ?
                 where id = ?
                 """,
-                ("cancel_pending", requested_at, effective_at, user["hotel_id"]),
+                ("cancel_pending", requested_at, effective_at, user["business_id"]),
             )
             insert(
                 conn,
                 "payments",
                 {
-                    "hotel_id": user["hotel_id"],
+                    "business_id": user["business_id"],
                     "provider": "platform",
                     "status": "cancellation_requested",
                     "checkout_session_id": None,
@@ -626,7 +706,7 @@ async def api_request_cancellation(request: Request):
             )
         conn.commit()
         payload = user_context(user)
-    await broadcast(user["hotel_id"], "billing", payload)
+    await broadcast(user["business_id"], "billing", payload)
     return payload
 
 
@@ -637,31 +717,31 @@ async def api_schedule_package_change(request: Request):
     package_key = package_from_body(body)
     keep_subscription_active = bool((body or {}).get("keepSubscriptionActive"))
     with db() as conn:
-        hotel = get_hotel(conn, user["hotel_id"])
-        if hotel["payment_status"] not in {"active", "cancel_pending"}:
+        business = get_business(conn, user["business_id"])
+        if business["payment_status"] not in {"active", "cancel_pending"}:
             raise HTTPException(400, "Choose a package to activate your account first.")
-        if hotel["package_key"] == package_key:
+        if business["package_key"] == package_key:
             raise HTTPException(400, "This package is already active.")
-        effective_at = hotel["subscription_renews_at"] or next_renewal_date()
-        payment_status = "active" if keep_subscription_active and hotel["payment_status"] == "cancel_pending" else hotel["payment_status"]
-        cancellation_requested_at = None if keep_subscription_active and hotel["payment_status"] == "cancel_pending" else hotel["cancellation_requested_at"]
-        cancellation_effective_at = None if keep_subscription_active and hotel["payment_status"] == "cancel_pending" else hotel["cancellation_effective_at"]
+        effective_at = business["subscription_renews_at"] or next_renewal_date()
+        payment_status = "active" if keep_subscription_active and business["payment_status"] == "cancel_pending" else business["payment_status"]
+        cancellation_requested_at = None if keep_subscription_active and business["payment_status"] == "cancel_pending" else business["cancellation_requested_at"]
+        cancellation_effective_at = None if keep_subscription_active and business["payment_status"] == "cancel_pending" else business["cancellation_effective_at"]
         conn.execute(
             """
-            update hotels
+            update businesses
             set payment_status = ?, pending_package_key = ?, pending_package_effective_at = ?,
                 cancellation_requested_at = ?, cancellation_effective_at = ?
             where id = ?
             """,
-            (payment_status, package_key, effective_at, cancellation_requested_at, cancellation_effective_at, user["hotel_id"]),
+            (payment_status, package_key, effective_at, cancellation_requested_at, cancellation_effective_at, user["business_id"]),
         )
         insert(
             conn,
             "payments",
             {
-                "hotel_id": user["hotel_id"],
+                "business_id": user["business_id"],
                 "provider": "platform",
-                "status": "package_change_scheduled_active" if keep_subscription_active and hotel["payment_status"] == "cancel_pending" else "package_change_scheduled",
+                "status": "package_change_scheduled_active" if keep_subscription_active and business["payment_status"] == "cancel_pending" else "package_change_scheduled",
                 "checkout_session_id": None,
                 "amount": PACKAGES[package_key]["price"] * 100,
                 "currency": "usd",
@@ -670,7 +750,7 @@ async def api_schedule_package_change(request: Request):
         )
         conn.commit()
         payload = user_context(user)
-    await broadcast(user["hotel_id"], "billing", payload)
+    await broadcast(user["business_id"], "billing", payload)
     return payload
 
 
@@ -684,15 +764,15 @@ async def api_stripe_webhook(request: Request):
     event = json.loads(raw.decode("utf-8"))
     if event.get("type") == "checkout.session.completed":
         session = event["data"]["object"]
-        hotel_id = int(session.get("client_reference_id") or session.get("metadata", {}).get("hotel_id"))
+        business_id = int(session.get("client_reference_id") or session.get("metadata", {}).get("business_id"))
         package_key = package_from_body(session.get("metadata", {}))
         with db() as conn:
-            activate_hotel(conn, hotel_id, package_key, "stripe", session.get("id"))
+            activate_business(conn, business_id, package_key, "stripe", session.get("id"))
             conn.commit()
-            user = conn.execute("select * from users where hotel_id = ?", (hotel_id,)).fetchone()
+            user = conn.execute("select * from users where business_id = ?", (business_id,)).fetchone()
             payload = user_context(user) if user else None
         if payload:
-            await broadcast(hotel_id, "billing", payload)
+            await broadcast(business_id, "billing", payload)
     return {"received": True}
 
 
@@ -700,10 +780,11 @@ def init_db() -> None:
     DATA_DIR.mkdir(exist_ok=True)
     with db() as conn:
         conn.executescript(
-            """
-            create table if not exists hotels (
+           """
+            create table if not exists businesses (
               id integer primary key autoincrement,
               name text not null,
+              business_type text not null,
               google_link text not null,
               sms_template text not null,
               email_template text not null,
@@ -722,16 +803,16 @@ def init_db() -> None:
               id integer primary key autoincrement,
               email text not null unique,
               password_hash text not null,
-              hotel_id integer not null references hotels(id),
+              business_id integer not null references businesses(id),
               created_at text not null
             );
-            create table if not exists requests (
+            create table if not exists review_requests (
               id integer primary key autoincrement,
-              hotel_id integer not null references hotels(id),
-              guest_name text not null,
+              business_id integer not null references businesses(id),
+              person_name text not null,
               phone text not null,
               email text not null,
-              stay_date text not null,
+              service_date text not null,
               token text not null unique,
               status text not null,
               notes text not null,
@@ -745,8 +826,8 @@ def init_db() -> None:
             );
             create table if not exists feedback (
               id integer primary key autoincrement,
-              request_id integer not null unique references requests(id),
-              hotel_id integer not null references hotels(id),
+              review_request_id integer not null unique references review_requests(id),
+              business_id integer not null references businesses(id),
               rating integer not null,
               comments text not null,
               created_at text not null,
@@ -754,8 +835,8 @@ def init_db() -> None:
             );
             create table if not exists deliveries (
               id integer primary key autoincrement,
-              hotel_id integer not null references hotels(id),
-              request_id integer not null references requests(id),
+              business_id integer not null references businesses(id),
+              review_request_id integer not null references review_requests(id),
               provider text not null,
               channel text not null,
               status text not null,
@@ -764,7 +845,7 @@ def init_db() -> None:
             );
             create table if not exists payments (
               id integer primary key autoincrement,
-              hotel_id integer not null references hotels(id),
+              business_id integer not null references businesses(id),
               provider text not null,
               status text not null,
               checkout_session_id text,
@@ -782,30 +863,19 @@ def init_db() -> None:
             );
             """
         )
-        ensure_column(conn, "hotels", "package_key", "text")
-        ensure_column(conn, "hotels", "trial_ends_at", "text")
-        ensure_column(conn, "hotels", "cancellation_requested_at", "text")
-        ensure_column(conn, "hotels", "cancellation_effective_at", "text")
-        ensure_column(conn, "hotels", "subscription_renews_at", "text")
-        ensure_column(conn, "hotels", "pending_package_key", "text")
-        ensure_column(conn, "hotels", "pending_package_effective_at", "text")
-        ensure_column(conn, "requests", "google_clicked_at", "text")
-        ensure_column(conn, "requests", "google_click_count", "integer not null default 0")
-        ensure_column(conn, "requests", "completed_at", "text")
-        ensure_column(conn, "requests", "completion_type", "text")
-        rows = conn.execute("select id, created_at, trial_ends_at from hotels").fetchall()
+        rows = conn.execute("select id, created_at, trial_ends_at from businesses").fetchall()
         for row in rows:
             if not row["trial_ends_at"]:
-                conn.execute("update hotels set trial_ends_at = ? where id = ?", (trial_end(row["created_at"]), row["id"]))
+                conn.execute("update businesses set trial_ends_at = ? where id = ?", (trial_end(row["created_at"]), row["id"]))
         renewal_rows = conn.execute(
             """
-            select id from hotels
+            select id from businesses
             where payment_status in ('active', 'cancel_pending')
               and (subscription_renews_at is null or subscription_renews_at = '')
             """
         ).fetchall()
         for row in renewal_rows:
-            conn.execute("update hotels set subscription_renews_at = ? where id = ?", (next_renewal_date(), row["id"]))
+            conn.execute("update businesses set subscription_renews_at = ? where id = ?", (next_renewal_date(), row["id"]))
 
 
 def db():
@@ -821,15 +891,17 @@ def insert(conn: sqlite3.Connection, table: str, values: dict[str, Any]) -> int:
     return int(cursor.lastrowid)
 
 
-def create_hotel(conn: sqlite3.Connection, hotel_name: str) -> int:
+def create_business(conn: sqlite3.Connection, business_name: str, business_type: str) -> int:
+    terms = terminology(business_type)
     return insert(
         conn,
-        "hotels",
+        "businesses",
         {
-            "name": hotel_name,
-            "google_link": "https://www.google.com/search?q=hotel+reviews",
-            "sms_template": "Hi {guest}, thanks for staying at {hotel}. Share feedback here: {link}",
-            "email_template": "Hello {guest},\n\nThank you for staying at {hotel}. Share feedback here: {link}",
+            "name": business_name,
+            "business_type": terms["key"],
+            "google_link": "https://www.google.com/search?q=business+reviews",
+            "sms_template": terms["smsTemplate"],
+            "email_template": terms["emailTemplate"],
             "plan": "trial",
             "payment_status": "trial",
             "package_key": None,
@@ -869,48 +941,52 @@ def set_session(response: Response, user_id: int) -> None:
 
 def user_context(user) -> dict[str, Any]:
     with db() as conn:
-        apply_scheduled_package_change(conn, user["hotel_id"])
-        hotel = get_hotel(conn, user["hotel_id"])
-    access = hotel_access_status(hotel)
+        apply_scheduled_package_change(conn, user["business_id"])
+        business = get_business(conn, user["business_id"])
+    access = business_access_status(business)
+    terms = terminology(business["business_type"])
     return {
         "user": {"id": user["id"], "email": user["email"]},
-        "hotel": {
-            "id": hotel["id"],
-            "name": hotel["name"],
-            "googleLink": hotel["google_link"],
-            "smsTemplate": hotel["sms_template"],
-            "emailTemplate": hotel["email_template"],
-            "plan": hotel["plan"],
-            "paymentStatus": hotel["payment_status"],
-            "packageKey": hotel["package_key"],
-            "trialEndsAt": hotel["trial_ends_at"],
-            "cancellationRequestedAt": hotel["cancellation_requested_at"],
-            "cancellationEffectiveAt": hotel["cancellation_effective_at"],
-            "subscriptionRenewsAt": hotel["subscription_renews_at"],
-            "pendingPackageKey": hotel["pending_package_key"],
-            "pendingPackageEffectiveAt": hotel["pending_package_effective_at"],
+        "business": {
+            "id": business["id"],
+            "name": business["name"],
+            "businessType": terms["key"],
+            "googleLink": business["google_link"],
+            "smsTemplate": business["sms_template"],
+            "emailTemplate": business["email_template"],
+            "plan": business["plan"],
+            "paymentStatus": business["payment_status"],
+            "packageKey": business["package_key"],
+            "trialEndsAt": business["trial_ends_at"],
+            "cancellationRequestedAt": business["cancellation_requested_at"],
+            "cancellationEffectiveAt": business["cancellation_effective_at"],
+            "subscriptionRenewsAt": business["subscription_renews_at"],
+            "pendingPackageKey": business["pending_package_key"],
+            "pendingPackageEffectiveAt": business["pending_package_effective_at"],
             "accessActive": access["active"],
             "accessReason": access["reason"],
             "trialDaysRemaining": access["trialDaysRemaining"],
         },
+        "businessTypes": list(BUSINESS_TYPES.values()),
+        "terms": terms,
         "packages": list(PACKAGES.values()),
     }
 
 
-def get_hotel(conn: sqlite3.Connection, hotel_id: int):
-    return conn.execute("select * from hotels where id = ?", (hotel_id,)).fetchone()
+def get_business(conn: sqlite3.Connection, business_id: int):
+    return conn.execute("select * from businesses where id = ?", (business_id,)).fetchone()
 
 
-def list_requests(conn: sqlite3.Connection, hotel_id: int) -> list[dict[str, Any]]:
+def list_requests(conn: sqlite3.Connection, business_id: int) -> list[dict[str, Any]]:
     rows = conn.execute(
         """
         select r.*, f.rating, f.comments
-        from requests r
-        left join feedback f on f.request_id = r.id
-        where r.hotel_id = ?
+        from review_requests r
+        left join feedback f on f.review_request_id = r.id
+        where r.business_id = ?
         order by r.id desc
         """,
-        (hotel_id,),
+        (business_id,),
     ).fetchall()
     return [shape_request(row, row) for row in rows]
 
@@ -918,10 +994,10 @@ def list_requests(conn: sqlite3.Connection, hotel_id: int) -> list[dict[str, Any
 def shape_request(request, feedback) -> dict[str, Any]:
     return {
         "id": request["id"],
-        "guestName": request["guest_name"],
+        "personName": request["person_name"],
         "phone": request["phone"],
         "email": request["email"],
-        "stayDate": request["stay_date"],
+        "serviceDate": request["service_date"],
         "status": request["status"],
         "rating": feedback["rating"] if feedback and "rating" in feedback.keys() else None,
         "comments": feedback["comments"] if feedback and "comments" in feedback.keys() and feedback["comments"] else "",
@@ -937,24 +1013,24 @@ def shape_request(request, feedback) -> dict[str, Any]:
     }
 
 
-def list_deliveries(conn: sqlite3.Connection, hotel_id: int) -> list[dict[str, Any]]:
+def list_deliveries(conn: sqlite3.Connection, business_id: int) -> list[dict[str, Any]]:
     rows = conn.execute(
         """
-        select d.*, r.guest_name, r.email, r.phone
+        select d.*, r.person_name, r.email, r.phone
         from deliveries d
-        left join requests r on r.id = d.request_id
-        where d.hotel_id = ?
+        left join review_requests r on r.id = d.review_request_id
+        where d.business_id = ?
         order by d.id desc
         """,
-        (hotel_id,),
+        (business_id,),
     ).fetchall()
     return [
         {
             "id": row["id"],
-            "requestId": row["request_id"],
-            "guestName": row["guest_name"] or "Unknown guest",
-            "guestEmail": row["email"] or "",
-            "guestPhone": row["phone"] or "",
+            "requestId": row["review_request_id"],
+            "personName": row["person_name"] or "Unknown person",
+            "personEmail": row["email"] or "",
+            "personPhone": row["phone"] or "",
             "provider": row["provider"],
             "channel": row["channel"],
             "status": row["status"],
@@ -968,20 +1044,25 @@ def list_deliveries(conn: sqlite3.Connection, hotel_id: int) -> list[dict[str, A
 def public_guest_context(conn: sqlite3.Connection, token: str):
     row = conn.execute(
         """
-        select r.*, h.name as hotel_name, h.google_link
-        from requests r
-        join hotels h on h.id = r.hotel_id
+        select r.*, b.name as business_name, b.business_type, b.google_link
+        from review_requests r
+        join businesses b on b.id = r.business_id
         where r.token = ?
         """,
         (token,),
     ).fetchone()
     if not row:
         return None
+    terms = terminology(row["business_type"])
     return {
-        "hotelName": row["hotel_name"],
-        "guestName": row["guest_name"],
-        "stayDate": row["stay_date"],
+        "businessName": row["business_name"],
+        "personName": row["person_name"],
+        "serviceDate": row["service_date"],
         "googleLink": row["google_link"],
+        "terms": terms,
+        "experienceQuestion": terms["experienceQuestion"].format(business=row["business_name"]),
+        "feedbackIntro": terms["feedbackIntro"].format(person=row["person_name"]),
+        "privateConfirmation": terms["privateConfirmation"],
         "alreadyRecorded": request_is_completed(row),
         "completedAt": row["completed_at"] if "completed_at" in row.keys() else None,
         "completionType": row["completion_type"] if "completion_type" in row.keys() else None,
@@ -995,8 +1076,8 @@ def request_is_completed(request) -> bool:
     )
 
 
-def save_feedback(conn: sqlite3.Connection, guest_request, rating: int, comments: str) -> None:
-    existing = conn.execute("select id from feedback where request_id = ?", (guest_request["id"],)).fetchone()
+def save_feedback(conn: sqlite3.Connection, review_request, rating: int, comments: str) -> None:
+    existing = conn.execute("select id from feedback where review_request_id = ?", (review_request["id"],)).fetchone()
     if existing:
         conn.execute(
             "update feedback set rating = ?, comments = ?, updated_at = ? where id = ?",
@@ -1006,9 +1087,9 @@ def save_feedback(conn: sqlite3.Connection, guest_request, rating: int, comments
     insert(
         conn,
         "feedback",
-        {
-            "request_id": guest_request["id"],
-            "hotel_id": guest_request["hotel_id"],
+            {
+            "review_request_id": review_request["id"],
+            "business_id": review_request["business_id"],
             "rating": rating,
             "comments": comments,
             "created_at": now(),
@@ -1017,18 +1098,19 @@ def save_feedback(conn: sqlite3.Connection, guest_request, rating: int, comments
     )
 
 
-async def send_review_request(conn: sqlite3.Connection, hotel, request) -> dict[str, Any]:
-    sms_body = render_template(hotel["sms_template"], hotel, request)
-    email_body = render_template(hotel["email_template"], hotel, request)
+async def send_review_request(conn: sqlite3.Connection, business, request) -> dict[str, Any]:
+    sms_body = render_template(business["sms_template"], business, request)
+    email_body = render_template(business["email_template"], business, request)
     sms = await send_sms(request["phone"], sms_body)
-    email = await send_email(request["email"], f"How was your stay at {hotel['name']}?", email_body)
+    subject = terminology(business["business_type"])["emailSubject"].format(business=business["name"])
+    email = await send_email(request["email"], subject, email_body)
     for result in [sms, email]:
         insert(
             conn,
             "deliveries",
             {
-                "hotel_id": hotel["id"],
-                "request_id": request["id"],
+                "business_id": business["id"],
+                "review_request_id": request["id"],
                 "provider": result["provider"],
                 "channel": result["channel"],
                 "status": result["status"],
@@ -1079,10 +1161,10 @@ async def send_email(to: str, subject: str, body: str) -> dict[str, str]:
         return {"channel": "email", "provider": "brevo", "status": "failed", "message": f"{exc}\n\n{body}"}
 
 
-def render_template(template: str, hotel, request) -> str:
+def render_template(template: str, business, request) -> str:
     return (
-        template.replace("{guest}", request["guest_name"])
-        .replace("{hotel}", hotel["name"])
+        template.replace("{person}", request["person_name"])
+        .replace("{business}", business["name"])
         .replace("{link}", feedback_url(request["token"]))
     )
 
@@ -1091,24 +1173,24 @@ def feedback_url(token: str) -> str:
     return f"{APP_URL}/guest?t={token}"
 
 
-def activate_hotel(conn: sqlite3.Connection, hotel_id: int, package_key: str, provider: str, checkout_session_id: str | None) -> None:
+def activate_business(conn: sqlite3.Connection, business_id: int, package_key: str, provider: str, checkout_session_id: str | None) -> None:
     package = PACKAGES[package_key]
     conn.execute(
         """
-        update hotels
+        update businesses
         set plan = ?, payment_status = ?, package_key = ?,
             subscription_renews_at = ?,
             pending_package_key = null, pending_package_effective_at = null,
             cancellation_requested_at = null, cancellation_effective_at = null
         where id = ?
         """,
-        (package_key, "active", package_key, next_renewal_date(), hotel_id),
+        (package_key, "active", package_key, next_renewal_date(), business_id),
     )
     insert(
         conn,
         "payments",
         {
-            "hotel_id": hotel_id,
+            "business_id": business_id,
             "provider": provider,
             "status": "paid",
             "checkout_session_id": checkout_session_id,
@@ -1119,8 +1201,8 @@ def activate_hotel(conn: sqlite3.Connection, hotel_id: int, package_key: str, pr
     )
 
 
-async def broadcast(hotel_id: int, event: str, payload: Any) -> None:
-    for queue in subscribers.get(hotel_id, set()).copy():
+async def broadcast(business_id: int, event: str, payload: Any) -> None:
+    for queue in subscribers.get(business_id, set()).copy():
         await queue.put((event, payload))
 
 
@@ -1177,21 +1259,21 @@ def next_renewal_date(base_date: str | None = None) -> str:
     return (base + timedelta(days=30)).isoformat()
 
 
-def apply_scheduled_package_change(conn: sqlite3.Connection, hotel_id: int) -> None:
-    hotel = get_hotel(conn, hotel_id)
-    if not hotel or not hotel["pending_package_key"] or not hotel["pending_package_effective_at"]:
+def apply_scheduled_package_change(conn: sqlite3.Connection, business_id: int) -> None:
+    business = get_business(conn, business_id)
+    if not business or not business["pending_package_key"] or not business["pending_package_effective_at"]:
         return
-    if parse_dt(hotel["pending_package_effective_at"]) > datetime.now(timezone.utc):
+    if parse_dt(business["pending_package_effective_at"]) > datetime.now(timezone.utc):
         return
-    package_key = hotel["pending_package_key"]
+    package_key = business["pending_package_key"]
     conn.execute(
         """
-        update hotels
+        update businesses
         set plan = ?, package_key = ?, pending_package_key = null,
             pending_package_effective_at = null, subscription_renews_at = ?
         where id = ?
         """,
-        (package_key, package_key, next_renewal_date(), hotel_id),
+        (package_key, package_key, next_renewal_date(), business_id),
     )
 
 
@@ -1202,15 +1284,15 @@ def parse_dt(value: str | None) -> datetime:
     return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
 
 
-def hotel_access_status(hotel) -> dict[str, Any]:
-    if hotel["payment_status"] == "active":
+def business_access_status(business) -> dict[str, Any]:
+    if business["payment_status"] == "active":
         return {"active": True, "reason": "paid", "trialDaysRemaining": 0}
-    if hotel["payment_status"] == "cancel_pending":
-        effective_at = parse_dt(hotel["cancellation_effective_at"])
+    if business["payment_status"] == "cancel_pending":
+        effective_at = parse_dt(business["cancellation_effective_at"])
         if effective_at > datetime.now(timezone.utc):
             return {"active": True, "reason": "cancel_pending", "trialDaysRemaining": 0}
         return {"active": False, "reason": "cancelled", "trialDaysRemaining": 0}
-    trial_ends_at = parse_dt(hotel["trial_ends_at"])
+    trial_ends_at = parse_dt(business["trial_ends_at"])
     remaining = trial_ends_at - datetime.now(timezone.utc)
     if remaining.total_seconds() > 0:
         days = max(1, int((remaining.total_seconds() + 86399) // 86400))
@@ -1218,14 +1300,14 @@ def hotel_access_status(hotel) -> dict[str, Any]:
     return {"active": False, "reason": "trial_expired", "trialDaysRemaining": 0}
 
 
-def hotel_has_access(hotel) -> bool:
-    return hotel_access_status(hotel)["active"]
+def business_has_access(business) -> bool:
+    return business_access_status(business)["active"]
 
 
 def require_platform_access(user) -> None:
     with db() as conn:
-        hotel = get_hotel(conn, user["hotel_id"])
-    if not hotel_has_access(hotel):
+        business = get_business(conn, user["business_id"])
+    if not business_has_access(business):
         raise HTTPException(402, "Your 7-day trial has ended. Please choose a package to continue using the platform.")
 
 
@@ -1240,7 +1322,10 @@ def stripe_price_for_package(package_key: str) -> str | None:
     return os.getenv(PACKAGES[package_key]["stripe_env"]) or os.getenv("STRIPE_PRICE_ID")
 
 
-def ensure_column(conn: sqlite3.Connection, table: str, column: str, definition: str) -> None:
-    columns = {row["name"] for row in conn.execute(f"pragma table_info({table})").fetchall()}
-    if column not in columns:
-        conn.execute(f"alter table {table} add column {column} {definition}")
+def normalize_business_type(value: Any) -> str:
+    key = clean(value or "hotel").lower().replace("-", "_")
+    return key if key in BUSINESS_TYPES else "other"
+
+
+def terminology(business_type: Any) -> dict[str, Any]:
+    return BUSINESS_TYPES.get(normalize_business_type(business_type), BUSINESS_TYPES["other"])
