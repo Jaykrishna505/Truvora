@@ -2,6 +2,14 @@
 
 All meaningful platform changes will be tracked here.
 
+## v0.1.16 - Clean Business-Type Generic Schema
+
+- Added business type selection for hotels, restaurants, salons/spas, auto service, healthcare, home services, and other local businesses.
+- Updated dashboard and public feedback pages to use business-specific terminology such as Guest/Stay, Customer/Visit, Client/Appointment, and Patient/Visit.
+- Replaced hotel-specific database names with clean generic names such as `businesses`, `review_requests`, `business_id`, `person_name`, and `service_date`.
+- Removed old API/template compatibility for `hotel`, `guestName`, `stayDate`, `{guest}`, and `{hotel}`.
+- Renamed Guest Outreach to Customer Outreach.
+
 ## v0.1.15 - Client Pitch Deck
 
 - Added a PowerPoint pitch deck for client presentations.
