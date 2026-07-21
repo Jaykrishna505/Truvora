@@ -1,18 +1,19 @@
 # Truvora Python Realtime Review Platform
 
-This is a Python/FastAPI version of the hotel review request platform.
+This is a Python/FastAPI version of the local business review request platform.
 
 ## What It Does
 
-- Hotel owner signup and login
+- Business owner signup and login
 - Inline login/registration errors without leaving the page
 - Forgot-password flow with secure 30-minute, one-time reset links
-- Hotel dashboard
-- Hotel settings for Google review link, SMS template, and email template
-- Guest request creation
-- Unique public guest feedback links
-- Guest rating and comments
-- Single-use guest feedback links after a response is recorded
+- Business-type-aware terminology for hotels, restaurants, salons/spas, auto service, healthcare, home services, and other local businesses
+- Business dashboard
+- Business settings for Google review link, SMS template, email template, and business type
+- Review request creation
+- Unique public feedback links
+- Rating and comments
+- Single-use feedback links after a response is recorded
 - Private feedback submission for lower ratings
 - Google review redirect for higher ratings
 - Local Google review button click tracking
@@ -24,7 +25,7 @@ This is a Python/FastAPI version of the hotel review request platform.
 - Twilio SMS support
 - Stripe Checkout-ready payment flow
 - Local simulated payment fallback
-- 7-day hotel trial
+- 7-day trial
 - Paid package gating after trial
 - SQLite local database
 
@@ -176,13 +177,13 @@ The platform has three monthly packages:
 
 | Package | Price | Includes |
 |---|---:|---|
-| Guest Outreach | $149/month | SMS and email review requests to guests |
+| Customer Outreach | $149/month | SMS and email review requests to customers, guests, clients, or patients |
 | Reputation Management | $249/month | SMS/email plus replying to online reviews |
 | Social Management | $349/month | SMS/email, review replies, and Facebook/social post management |
 
-Every hotel account gets a 7-day trial. After the trial ends, core platform features are blocked until the hotel activates one of these packages.
+Every business account gets a 7-day trial. After the trial ends, core platform features are blocked until the business activates one of these packages.
 
-Package cancellation requires 60 days notice. When a hotel owner requests cancellation, the package remains active until the cancellation effective date. After that date, core platform features are blocked unless the hotel chooses a package again.
+Package cancellation requires 60 days notice. When a business owner requests cancellation, the package remains active until the cancellation effective date. After that date, core platform features are blocked unless the business chooses a package again.
 
 Package changes for active accounts are scheduled for the next renewal date. The current package remains active until that renewal date, then the pending package becomes the active package. Trial or inactive accounts activate the selected package immediately after checkout.
 
@@ -212,17 +213,63 @@ The SQLite database is created at:
 data\app.db
 ```
 
+This version uses a clean generic schema:
+
+```text
+businesses
+review_requests
+feedback
+deliveries
+payments
+users
+password_resets
+```
+
+Key generic columns include:
+
+```text
+business_id
+business_type
+person_name
+service_date
+review_request_id
+```
+
+Because the platform is not live yet, this version intentionally does not include compatibility migrations for older local test databases. If you have an older local `data\app.db`, delete it before running the app so SQLite recreates the clean schema.
+
 For production, migrate to PostgreSQL.
 
-## Guest Feedback Flow
+## Business-Type Terminology
 
-Each review request creates a unique guest link. The guest selects a star rating and can add comments.
+Accounts store a `business_type`, and the UI changes terminology based on that type.
 
-- Ratings below 3 submit private feedback to the hotel team.
-- Ratings of 3 or higher record the entered rating/comments locally, track the Google review button click, and then redirect the guest to the hotel's Google review link.
-- After either path is completed, opening the same guest link again shows that the review was already recorded.
+| Business type | Person label | Date label |
+|---|---|---|
+| Hotel | Guest | Stay date |
+| Restaurant | Customer | Visit date |
+| Salon / Spa | Client | Appointment date |
+| Auto Service | Customer | Service date |
+| Dental / Medical | Patient | Visit date |
+| Home Services | Customer | Service date |
+| Other Local Business | Customer | Visit date |
 
-The platform can record what the guest entered before leaving for Google, but it cannot confirm whether the guest actually submitted a Google review on Google's website.
+Template variables use only the clean generic placeholders:
+
+```text
+{person}
+{business}
+{link}
+```
+
+## Feedback Flow
+
+Each review request creates a unique feedback link. The person selects a star rating and can add comments.
+
+- Ratings below 3 submit private feedback to the business.
+- Ratings of 3 or higher record the entered rating/comments locally, track the Google review button click, and then redirect to the business's Google review link.
+- After either path is completed, opening the same feedback link again shows that the review was already recorded.
+
+The platform can record what the person entered before leaving for Google, but it cannot confirm whether they actually submitted a Google review on Google's website.
 
 ## Stop The App
 
@@ -242,7 +289,6 @@ Before going live:
 - Add secure production session handling
 - Add rate limiting
 - Add CSRF protection
-- Add password reset
 - Add email verification
 - Complete Twilio A2P 10DLC registration for US SMS
 - Verify Brevo sender/domain
