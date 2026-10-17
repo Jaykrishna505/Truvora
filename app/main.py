@@ -41,6 +41,11 @@ load_env(ROOT / ".env")
 PORT = int(os.getenv("PORT", "8000"))
 APP_URL = os.getenv("APP_URL", f"http://localhost:{PORT}")
 SESSION_SECRET = os.getenv("SESSION_SECRET", "local-development-secret")
+PUBLIC_DEPLOYMENT = APP_URL.lower().startswith("https://") or os.getenv("APP_ENV") == "production"
+if PUBLIC_DEPLOYMENT and (
+    len(SESSION_SECRET) < 32 or SESSION_SECRET == "change-this-in-production"
+):
+    raise RuntimeError("Public deployment requires a unique SESSION_SECRET of at least 32 characters.")
 
 PACKAGES = {
     "outreach": {
@@ -343,7 +348,7 @@ async def api_forgot_password(request: Request):
             )
 
     payload = {"ok": True, "message": "If an account exists for that email, a reset link has been prepared."}
-    if reset_url and delivery and delivery["provider"] == "local":
+    if not PUBLIC_DEPLOYMENT and reset_url and delivery and delivery["provider"] == "local":
         payload["message"] = "Email delivery is not configured, so use this local reset link:"
         payload["resetUrl"] = reset_url
     return payload
@@ -633,6 +638,8 @@ async def api_checkout(request: Request):
             raise HTTPException(400, "Package changes for active accounts are scheduled for the next renewal date.")
     stripe_price_id = stripe_price_for_package(package_key)
     if not os.getenv("STRIPE_SECRET_KEY") or not stripe_price_id:
+        if PUBLIC_DEPLOYMENT:
+            raise HTTPException(503, "Payments are not configured yet. Please contact support.")
         return {"mode": "local", "checkoutUrl": f"/billing?package={package_key}"}
 
     async with httpx.AsyncClient(timeout=20) as client:
@@ -659,6 +666,8 @@ async def api_checkout(request: Request):
 
 @app.post("/api/payments/simulate")
 async def api_simulate_payment(request: Request):
+    if PUBLIC_DEPLOYMENT:
+        raise HTTPException(403, "Simulated payments are disabled on the public platform.")
     user = require_user(request)
     body = await request.json()
     package_key = package_from_body(body)
@@ -758,6 +767,8 @@ async def api_schedule_package_change(request: Request):
 async def api_stripe_webhook(request: Request):
     raw = await request.body()
     secret = os.getenv("STRIPE_WEBHOOK_SECRET")
+    if not secret:
+        raise HTTPException(503, "Payment webhooks are not configured.")
     if secret and not verify_stripe_signature(raw, request.headers.get("stripe-signature", ""), secret):
         raise HTTPException(400, "Invalid Stripe signature.")
 
@@ -936,7 +947,10 @@ def require_user(request: Request):
 
 
 def set_session(response: Response, user_id: int) -> None:
-    response.set_cookie("sid", serializer.dumps({"user_id": user_id}), httponly=True, samesite="lax", path="/")
+    response.set_cookie(
+        "sid", serializer.dumps({"user_id": user_id}), httponly=True,
+        secure=PUBLIC_DEPLOYMENT, samesite="lax", path="/",
+    )
 
 
 def user_context(user) -> dict[str, Any]:

@@ -2,6 +2,13 @@
 
 All meaningful platform changes will be tracked here.
 
+## v0.1.19 - Public Access Guards (Prepared)
+
+- Disabled local payment activation and reset-link disclosure for public deployments.
+- Required a webhook signing secret and a strong public session secret.
+- Enabled Secure cookies when APP_URL uses HTTPS or APP_ENV is production.
+- Added regression tests. Full Stripe subscription synchronization remains pending.
+
 ## v0.1.18 - Public Hostname Configuration (Prepared)
 
 - Added an Nginx reverse-proxy configuration with realtime streaming support.
