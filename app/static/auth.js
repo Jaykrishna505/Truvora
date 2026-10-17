@@ -40,13 +40,20 @@ forgotForm.addEventListener("submit", async (event) => {
 });
 
 async function submitAuth(url, form, pendingText) {
+  const button = form.querySelector('[type="submit"]');
+  if (button?.disabled) return;
+  if (button) button.disabled = true;
   setMessage(pendingText, "info");
-  const result = await api(url, { method: "POST", body: Object.fromEntries(new FormData(form)) });
-  if (result.error) {
-    setMessage(result.error, "error");
-    return;
+  try {
+    const result = await api(url, { method: "POST", body: Object.fromEntries(new FormData(form)) });
+    if (result.error) {
+      setMessage(result.error, "error");
+      return;
+    }
+    location.href = "/app";
+  } finally {
+    if (button) button.disabled = false;
   }
-  location.href = "/app";
 }
 
 function showAuthView(view) {
@@ -67,13 +74,35 @@ function setMessage(text, tone) {
 }
 
 async function api(url, options = {}) {
-  const response = await fetch(url, {
-    method: options.method || "GET",
-    headers: { "Content-Type": "application/json" },
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
-  const payload = await response.json();
-  return response.ok ? payload : { error: payload.detail || payload.error || "Request failed." };
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  try {
+    const response = await fetch(url, {
+      method: options.method || "GET",
+      headers: { "Content-Type": "application/json" },
+      body: options.body ? JSON.stringify(options.body) : undefined,
+      signal: controller.signal,
+    });
+    let payload;
+    try {
+      payload = await response.json();
+    } catch (error) {
+      if (controller.signal.aborted) throw error;
+      return { error: `The server returned an unexpected response (HTTP ${response.status}). Please try again.` };
+    }
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+      return { error: "The server returned an unexpected response. Please try again." };
+    }
+    return response.ok ? payload : { error: payload.detail || payload.error || "Request failed." };
+  } catch {
+    return {
+      error: controller.signal.aborted
+        ? "The request timed out. Check whether your account was created by trying to log in before registering again."
+        : "Could not connect to the server. Please check your connection and try again.",
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function escapeHtml(value) {

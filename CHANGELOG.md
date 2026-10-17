@@ -2,6 +2,12 @@
 
 All meaningful platform changes will be tracked here.
 
+## v0.1.20 - Authentication Request Errors (Prepared)
+
+- Prevented signup/login from remaining on their pending message after network failures or non-JSON responses.
+- Added a request timeout and duplicate-submit protection for signup/login.
+- Added browser-request regression tests; server signup failure still requires application logs.
+
 ## v0.1.19 - Public Access Guards (Prepared)
 
 - Disabled local payment activation and reset-link disclosure for public deployments.
