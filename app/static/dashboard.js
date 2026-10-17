@@ -63,18 +63,57 @@ document.querySelector("#settings-form").addEventListener("submit", async (event
   }
 });
 
-document.querySelector("#requests-table").addEventListener("change", async (event) => {
-  if (!event.target.matches("[data-note-id]")) return;
-  await api(`/api/requests/${event.target.dataset.noteId}/notes`, { method: "PUT", body: { notes: event.target.value } });
-});
-
 document.querySelector("#requests-table").addEventListener("click", async (event) => {
+  const notesButton = event.target.closest("[data-edit-notes]");
+  if (notesButton) {
+    event.preventDefault();
+    const item = requests.find((request) => String(request.id) === notesButton.dataset.editNotes);
+    if (!item) return;
+    const form = document.querySelector("#notes-form");
+    form.dataset.requestId = String(item.id);
+    form.elements.notes.value = item.notes || "";
+    document.querySelector("#notes-person").textContent = item.personName;
+    showOutput(document.querySelector("#notes-message"), "");
+    document.querySelector("#notes-dialog").showModal();
+    form.elements.notes.focus();
+    return;
+  }
   if (!event.target.matches("[data-copy]")) return;
   await navigator.clipboard.writeText(event.target.dataset.copy);
   event.target.textContent = "Copied";
   setTimeout(() => {
     event.target.textContent = "Copy";
   }, 1200);
+});
+
+document.querySelector("#notes-cancel").addEventListener("click", () => {
+  document.querySelector("#notes-dialog").close();
+});
+
+document.querySelector("#notes-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const button = document.querySelector("#notes-save");
+  if (button.disabled) return;
+  const requestId = form.dataset.requestId;
+  const notes = form.elements.notes.value;
+  button.disabled = true;
+  showOutput(document.querySelector("#notes-message"), "");
+  try {
+    const result = await api(`/api/requests/${requestId}/notes`, { method: "PUT", body: { notes } });
+    if (result.error) {
+      showOutput(document.querySelector("#notes-message"), result.error);
+      return;
+    }
+    const item = requests.find((request) => String(request.id) === requestId);
+    if (item) item.notes = notes;
+    renderRequests();
+    document.querySelector("#notes-dialog").close();
+  } catch {
+    showOutput(document.querySelector("#notes-message"), "Notes could not be saved. Please try again.");
+  } finally {
+    button.disabled = false;
+  }
 });
 
 document.querySelector("#refresh-deliveries").addEventListener("click", loadDeliveries);
@@ -275,7 +314,7 @@ function renderCancellationStatus() {
   }
 
   if (me.business.paymentStatus === "cancel_pending") {
-    status.textContent = `Cancellation requested. Your package remains active until ${formatDate(me.hotel.cancellationEffectiveAt)}.`;
+    status.textContent = `Cancellation requested. Your package remains active until ${formatDate(me.business.cancellationEffectiveAt)}.`;
     return;
   }
 
@@ -338,9 +377,8 @@ function renderRequests() {
           <td><span class="status ${item.status}">${item.status}</span></td>
           <td>${ratingCell(item.rating)}</td>
           <td>${item.comments ? escapeHtml(item.comments) : "Awaiting feedback"}${completionCell(item)}</td>
-          <td><a href="${item.feedbackUrl}" target="_blank">Open</a><button class="tiny-button" data-copy="${item.feedbackUrl}">Copy</button></td>
-          <td><a href="${item.feedbackUrl}" target="_blank">Open</a><button class="tiny-button" data-copy="${item.feedbackUrl}">Copy</button>${googleClickCell(item)}</td>
-          <td><textarea data-note-id="${item.id}" rows="2">${escapeHtml(item.notes)}</textarea></td>
+          <td><a href="${escapeHtml(item.feedbackUrl)}" target="_blank" rel="noopener">Open feedback</a><button type="button" class="tiny-button" data-copy="${escapeHtml(item.feedbackUrl)}">Copy</button>${googleClickCell(item)}</td>
+          <td class="notes-cell"><p class="notes-preview">${escapeHtml(item.notes)}</p><button type="button" class="secondary-button" data-edit-notes="${item.id}">Edit notes</button></td>
         </tr>
       `
     )

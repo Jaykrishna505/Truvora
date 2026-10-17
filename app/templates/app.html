@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Truvora Dashboard</title>
-    <link rel="stylesheet" href="/static/styles.css?v=0.1.16" />
+    <link rel="stylesheet" href="/static/styles.css?v=0.1.22" />
   </head>
   <body class="dashboard-page">
     <div class="shell">
@@ -140,6 +140,19 @@
       </main>
     </div>
 
-    <script src="/static/dashboard.js?v=0.1.16"></script>
+    <dialog id="notes-dialog" class="notes-dialog" aria-labelledby="notes-title">
+      <form id="notes-form">
+        <h2 id="notes-title">Follow-up notes</h2>
+        <p id="notes-person"></p>
+        <label for="notes-text">Notes</label>
+        <textarea id="notes-text" name="notes" rows="6"></textarea>
+        <output id="notes-message" class="message hidden" role="status"></output>
+        <div class="notes-actions">
+          <button type="button" class="secondary-button" id="notes-cancel">Cancel</button>
+          <button type="submit" class="primary-button" id="notes-save">Save notes</button>
+        </div>
+      </form>
+    </dialog>
+    <script src="/static/dashboard.js?v=0.1.22"></script>
   </body>
 </html>

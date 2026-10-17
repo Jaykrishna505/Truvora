@@ -2,6 +2,13 @@
 
 All meaningful platform changes will be tracked here.
 
+## v0.1.21 - Follow-Up Notes Editor And Hotel Checkout Date
+
+- Added a separate Edit notes dialog with Save and Cancel, independent of the feedback link.
+- Retained note text when saving fails and prevented duplicate saves.
+- Changed the hotel label to Checkout date; generic service_date storage is unchanged.
+- Updated dashboard asset versions and added regression tests.
+
 ## v0.1.20 - Authentication Request Errors (Prepared)
 
 - Prevented signup/login from remaining on their pending message after network failures or non-JSON responses.

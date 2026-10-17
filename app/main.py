@@ -80,7 +80,7 @@ BUSINESS_TYPES = {
         "name": "Hotel",
         "businessLabel": "Hotel",
         "personLabel": "Guest",
-        "dateLabel": "Stay date",
+        "dateLabel": "Checkout date",
         "entryLabel": "Guest entry",
         "activityLabel": "Guest activity",
         "feedbackEyebrow": "Guest feedback",

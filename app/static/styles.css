@@ -205,6 +205,15 @@ h1 { font-size: clamp(30px, 4vw, 44px); }
 .panel-heading { justify-content: space-between; gap: 16px; margin-bottom: 16px; }
 .segmented { display: inline-grid; grid-template-columns: repeat(3, auto); gap: 5px; padding: 5px; border: 1px solid var(--line); border-radius: 8px; }
 .table-wrap { overflow-x: auto; }
+.notes-cell { min-width: 180px; max-width: 280px; }
+.notes-preview { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0 0 8px; }
+.notes-preview:empty { display: none; }
+.notes-dialog { width: min(520px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 24px; color: var(--ink); }
+.notes-dialog::backdrop { background: rgb(0 0 0 / 35%); }
+.notes-dialog h2 { margin: 0; font-size: 22px; }
+.notes-dialog label { display: block; margin-bottom: 8px; }
+.notes-dialog textarea { display: block; min-height: 140px; }
+.notes-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 table { min-width: 980px; width: 100%; border-collapse: collapse; }
 th, td { padding: 13px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 14px; }
 th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
