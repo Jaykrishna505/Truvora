@@ -1,0 +1,65 @@
+name: Test and deploy to Lightsail
+
+on:
+  push:
+    branches: [All_local_businesses_branch]
+  pull_request:
+    branches: [All_local_businesses_branch]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: truvora-lightsail
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+      - run: bash -n deploy/bootstrap.sh deploy/deploy.sh deploy/rollback.sh
+
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/All_local_businesses_branch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SSH_HOST: ${{ secrets.LIGHTSAIL_HOST }}
+      SSH_USER: ubuntu
+      SSH_KEY: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+      KNOWN_HOSTS: ${{ secrets.LIGHTSAIL_KNOWN_HOSTS }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Configure verified SSH access
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$SSH_HOST" && test -n "$SSH_KEY" && test -n "$KNOWN_HOSTS"
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Upload and activate this commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git archive --format=tar.gz --output=/tmp/truvora.tar.gz "$GITHUB_SHA"
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$SSH_USER@$SSH_HOST" 'test -d /home/ubuntu/truvora-runtime/incoming'
+          scp -o BatchMode=yes -o StrictHostKeyChecking=yes /tmp/truvora.tar.gz "$SSH_USER@$SSH_HOST:/home/ubuntu/truvora-runtime/incoming/$GITHUB_SHA.tar.gz"
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$SSH_USER@$SSH_HOST" "bash -s -- $GITHUB_SHA" < deploy/deploy.sh
+      - name: Remove runner key
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519
