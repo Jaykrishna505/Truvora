@@ -2,6 +2,19 @@
 
 All meaningful platform changes will be tracked here.
 
+## v0.1.18 - Public Hostname Configuration (Prepared)
+
+- Added an Nginx reverse-proxy configuration with realtime streaming support.
+- Documented free sslip.io hostname, HTTPS setup, and public-access prerequisites.
+- No server configuration or public exposure was changed from this workspace.
+
+## v0.1.17 - Automated Lightsail Deployment (Prepared)
+
+- Added branch-specific GitHub Actions tests and SSH deployments.
+- Added systemd startup, isolated release directories, shared runtime data, SQLite backups, and code rollback.
+- Added a deployment smoke test and a step-by-step setup guide.
+- Deployment requires one-time server/key setup; no live server changes were made from this workspace.
+
 ## v0.1.16 - Clean Business-Type Generic Schema
 
 - Added business type selection for hotels, restaurants, salons/spas, auto service, healthcare, home services, and other local businesses.
